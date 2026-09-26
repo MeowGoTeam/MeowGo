@@ -36,6 +36,13 @@
   ],
   "shortcuts": [
     {
+      "name": "Community Feed",
+      "short_name": "Feed",
+      "description": "Guarda gli ultimi avvistamenti dei gatti",
+      "url": "./feed.html",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
       "name": "Cerca Utenti",
       "short_name": "Cerca",
       "description": "Cerca altri utenti e profili",
@@ -43,10 +50,17 @@
       "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Calendario Avvistamenti",
-      "short_name": "Calendario",
-      "description": "Visualizza il calendario degli avvistamenti",
-      "url": "./calendar.html",
+      "name": "Profilo, XP & Badge",
+      "short_name": "Profilo",
+      "description": "Vedi il tuo livello XP e i badge sbloccati",
+      "url": "./profile.html",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Modifica Profilo",
+      "short_name": "Modifica",
+      "description": "Aggiorna le informazioni del tuo profilo",
+      "url": "./pagine/modifica-profilo/modifica-profilo.html",
       "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
     },
     {
@@ -57,10 +71,17 @@
       "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Profilo, XP & Badge",
-      "short_name": "Profilo",
-      "description": "Vedi il tuo livello XP e i badge sbloccati",
-      "url": "./profile.html",
+      "name": "Calendario Avvistamenti",
+      "short_name": "Calendario",
+      "description": "Visualizza il calendario degli avvistamenti",
+      "url": "./calendar.html",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Crediti & Info",
+      "short_name": "Crediti",
+      "description": "Informazioni e riconoscimenti dell'app",
+      "url": "./pagine/crediti/crediti.html",
       "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
     }
   ]
