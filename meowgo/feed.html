@@ -48,6 +48,28 @@
       object-fit: cover;
     }
 
+    .post-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #d97706;
+    }
+
+    .post-avatar-placeholder {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #d97706, #b45309);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.1rem;
+      border: 2px solid #fff;
+    }
+
     .btn-like { color: #8c7a6b; transition: transform 0.2s; }
     .btn-like.liked { color: #dc2626; transform: scale(1.1); }
     
@@ -226,6 +248,7 @@
     const db = getDatabase(app);
     let selectedPostForShare = null;
     let shareModalInstance = null;
+    let usersCache = {}; // Cache per memorizzare le foto profilo degli utenti
 
     function getCurrentUser() {
       return JSON.parse(localStorage.getItem('meowgo_test_user')) || null;
@@ -258,7 +281,7 @@
 
     const currentUser = renderNavbar('feed');
     if (currentUser) {
-      listenToFeed();
+      initFeed();
       setupNotificationsListener(currentUser);
 
       if ('serviceWorker' in navigator) {
@@ -266,6 +289,24 @@
           console.log('Service Worker attivo per le notifiche di sistema.');
         });
       }
+    }
+
+    // Precarica la mappa degli utenti per associare la foto profilo (avatarUrl o photoURL)
+    async function preloadUsers() {
+      const usersSnap = await get(ref(db, 'users'));
+      if (usersSnap.exists()) {
+        const data = usersSnap.val();
+        Object.values(data).forEach(uData => {
+          if (uData.username) {
+            usersCache[uData.username] = uData.avatarUrl || uData.photoURL || null;
+          }
+        });
+      }
+    }
+
+    async function initFeed() {
+      await preloadUsers();
+      listenToFeed();
     }
 
     function setupNotificationsListener(user) {
@@ -336,6 +377,18 @@
           catList.forEach((post) => {
             if (post.deleted === true) return;
 
+            const authorName = post.author || 'Utente Sconosciuto';
+            const authorAvatar = usersCache[authorName];
+            
+            // Genera l'HTML dell'avatar o l'iniziale di riserva
+            let avatarHtml = '';
+            if (authorAvatar) {
+              avatarHtml = `<img src="${authorAvatar}" class="post-avatar me-2" alt="${authorName}">`;
+            } else {
+              const initial = authorName.charAt(0).toUpperCase();
+              avatarHtml = `<div class="post-avatar-placeholder me-2">${initial}</div>`;
+            }
+
             const likesMap = post.likes || {};
             const likesCount = Object.keys(likesMap).length;
             const isLiked = currentUser && likesMap[currentUser.id];
@@ -348,11 +401,14 @@
             const card = document.createElement('div');
             card.className = "glass-card overflow-hidden";
             card.innerHTML = `
-              <div class="p-3 d-flex align-items-center gap-2 border-bottom">
-                <div class="fw-bold text-dark" style="cursor: pointer;" onclick="window.location.href='profile-view.html?user=${encodeURIComponent(post.author)}'">
-                  <i class="fa-solid fa-circle-user text-warning"></i> ${post.author}
+              <div class="p-3 d-flex align-items-center justify-content-between border-bottom">
+                <div class="d-flex align-items-center" style="cursor: pointer;" onclick="window.location.href='profile-view.html?user=${encodeURIComponent(authorName)}'">
+                  ${avatarHtml}
+                  <div>
+                    <h6 class="mb-0 fw-bold text-dark">${authorName}</h6>
+                  </div>
                 </div>
-                <span class="small text-muted ms-auto"><i class="fa-regular fa-calendar-days me-1"></i>${dateTimeStr}</span>
+                <span class="small text-muted"><i class="fa-regular fa-calendar-days me-1"></i>${dateTimeStr}</span>
               </div>
               <img src="${post.imageUrl}" class="cat-post-img" alt="${post.catName}">
               <div class="p-3">
