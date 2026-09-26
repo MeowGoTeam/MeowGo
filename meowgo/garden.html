@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MeowGo - MeowGarden 🐾</title>
+
+  <!-- PWA Manifest & Icone Mobile -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#b45309">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="./icons/icon-512.png">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #f5f0eb 0%, #e6d5c3 50%, #d4a373 100%);
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      overflow-x: hidden;
+      color: #3d312a;
+    }
+
+    #garden-container-box {
+      width: 100%;
+      max-width: 450px;
+      aspect-ratio: 9 / 16;
+      margin: 0 auto;
+      position: relative;
+      background-image: url('https://i.ibb.co/93HyWQJ1/1784837930021.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      border: 8px solid #3d2314;
+      border-radius: 1.5rem;
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+    }
+
+    #cats-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+    }
+
+    .glass-card {
+      background: rgba(255, 253, 250, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(210, 180, 140, 0.4);
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 30px rgba(80, 50, 20, 0.1);
+    }
+
+    .navbar-glass {
+      background: rgba(255, 253, 250, 0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(210, 180, 140, 0.3);
+    }
+
+    .avatar-circle {
+      width: 70px; height: 70px;
+      background: linear-gradient(45deg, #d97706, #b45309);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.2rem;
+      border: 3px solid #fff;
+      color: white;
+    }
+
+    .cat-post-img {
+      width: 100%; height: 350px;
+      object-fit: cover;
+    }
+
+    .page-section { display: none; }
+    .page-section.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+
+    .btn-like { color: #8c7a6b; transition: transform 0.2s; }
+    .btn-like.liked { color: #dc2626; transform: scale(1.1); }
+
+    .auth-toggle-btn { cursor: pointer; color: #b45309; font-weight: bold; text-decoration: underline; }
+
+    .badge-card {
+      background: rgba(245, 238, 230, 0.8);
+      border-radius: 1rem;
+      padding: 8px 4px;
+      text-align: center;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+      filter: grayscale(100%);
+      opacity: 0.35;
+    }
+
+    .badge-card.unlocked {
+      filter: grayscale(0%);
+      opacity: 1;
+      background: #fff;
+      border-color: #f59e0b;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+
+    .secret-badge-col { display: none; }
+
+    .secret-badge-col.unlocked {
+      display: block;
+      animation: popIn 0.4s ease-out;
+    }
+
+    .secret-badge-col.unlocked .badge-card {
+      filter: grayscale(0%);
+      opacity: 1;
+      background: #fffbeb;
+      border-color: #b45309;
+      box-shadow: 0 4px 12px rgba(180, 83, 9, 0.3);
+    }
+
+    .badge-icon {
+      font-size: 1.6rem;
+      margin-bottom: 2px;
+    }
+
+    .btn-earth {
+      background: linear-gradient(45deg, #88502f, #b45309);
+      color: white;
+      border: none;
+    }
+    .btn-earth:hover {
+      background: linear-gradient(45deg, #6e3f23, #92400e);
+      color: white;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body class="pb-5">
+  <script>
+    if (!localStorage.getItem('meowgo_test_user')) location.replace('index.html');
+  </script>
+
+  <nav class="navbar navbar-expand-lg navbar-light sticky-top navbar-glass mb-4 position-relative z-3">
+    <div class="container">
+      <a class="navbar-brand fw-black fs-3 text-dark d-flex align-items-center gap-2" href="feed.html">
+        <i class="fa-solid fa-cat" style="color: #b45309;"></i> MeowGo
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto gap-2 mt-2 mt-lg-0" id="nav-links"></ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container position-relative z-1">
+    <section id="garden-page" class="page-section active">
+      <div class="row justify-content-center">
+        <div class="col-lg-9 text-center">
+          <div class="glass-card p-4 mb-4">
+            <h2 class="fw-bold text-success mb-1"><i class="fa-solid fa-tree"></i> Il Giardino di <span id="garden-owner-name">...</span></h2>
+            <p class="text-muted mb-0">Un'oasi verde reale in cui gironzolano liberamente i tuoi gatti!</p>
+          </div>
+
+          <div id="garden-container-box">
+            <canvas id="cats-canvas"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import {
+      getDatabase, ref, push, get, child, update, onValue, onChildAdded
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const IMGBB_API_KEY = "b2bd2cbba6ca0679055dc317aa5bf613";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDAwgqotGF0BTUGBjxOMseMMfXpBZdAUTI",
+      authDomain: "meowmaster-51991.firebaseapp.com",
+      databaseURL: "https://meowmaster-51991-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "meowmaster-51991",
+      storageBucket: "meowmaster-51991.firebasestorage.app",
+      messagingSenderId: "1079993425259",
+      appId: "1:1079993425259:web:1aa6a9e5f0a65b6ee4802e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    function getCurrentUser() {
+      return JSON.parse(localStorage.getItem('meowgo_test_user')) || null;
+    }
+    function setCurrentUser(user) {
+      localStorage.setItem('meowgo_test_user', JSON.stringify(user));
+    }
+    function clearCurrentUser() {
+      localStorage.removeItem('meowgo_test_user');
+    }
+
+    function renderNavbar(activePage, requireAuth = true) {
+      const currentUser = getCurrentUser();
+      const navLinks = document.getElementById('nav-links');
+
+      if (currentUser) {
+        navLinks.innerHTML = `
+          <li class="nav-item"><a class="nav-link fw-bold ${activePage === 'feed' ? 'text-warning' : 'text-dark'}" href="feed.html"><i class="fa-solid fa-newspaper"></i> Feed</a></li>
+          <li class="nav-item"><a class="nav-link fw-bold ${activePage === 'garden' ? 'text-warning' : 'text-success'}" href="garden.html"><i class="fa-solid fa-tree"></i> MeowGarden</a></li>
+          <li class="nav-item"><a class="nav-link fw-bold ${activePage === 'profile' ? 'text-warning' : 'text-dark'}" href="profile.html"><i class="fa-solid fa-user"></i> Profilo (${currentUser.username})</a></li>
+          <li class="nav-item"><a class="nav-link fw-bold text-danger" href="#" id="logout-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+        `;
+        const logoutLink = document.getElementById('logout-link');
+        if (logoutLink) {
+          logoutLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            clearCurrentUser();
+            window.location.href = 'index.html';
+          });
+        }
+      } else {
+        navLinks.innerHTML = `
+          <li class="nav-item"><a class="nav-link fw-bold text-dark" href="index.html"><i class="fa-solid fa-right-to-bracket"></i> Accedi</a></li>
+        `;
+        if (requireAuth && activePage !== 'login') {
+          window.location.replace('index.html');
+        }
+      }
+
+      return currentUser;
+    }
+
+    const currentUser = renderNavbar('garden');
+
+    if (currentUser) {
+      document.getElementById('garden-owner-name').innerText = currentUser.username;
+      checkBanStatus();
+      listenToAdminNotifications();
+      listenToMyCats();
+    }
+
+    // --- CONTROLLO BAN UTENTE ---
+    function checkBanStatus() {
+      if (!currentUser || !currentUser.id) return;
+      const userRef = ref(db, 'users/' + currentUser.id);
+      onValue(userRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const userData = snapshot.val();
+          if (userData.bannedUntil) {
+            const isBanned = userData.bannedUntil === 'indefinite' || new Date(userData.bannedUntil) > new Date();
+            if (isBanned) {
+              clearCurrentUser();
+              document.body.innerHTML = `
+                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; text-align:center; padding:20px; font-family:sans-serif;">
+                  <h1 style="color: #dc2626; font-size: 2.5rem; font-weight: bold;">⛔ ACCOUNT BLOCCATO</h1>
+                  <p style="font-size: 1.2rem; color: #4b5563;">Sei stato sospeso da MeowGo.</p>
+                  <p><strong>Motivo:</strong> ${userData.banReason || 'Violazione delle regole della community'}</p>
+                  <a href="index.html" class="btn btn-warning mt-3">Torna alla Login</a>
+                </div>
+              `;
+            }
+          }
+        }
+      });
+    }
+
+    // --- ASCOLTO NOTIFICHE ADMIN ---
+    function listenToAdminNotifications() {
+      if (!currentUser) return;
+
+      const globalNotifRef = ref(db, 'notifications/global');
+      onChildAdded(globalNotifRef, (snapshot) => {
+        const notif = snapshot.val();
+        if (notif && notif.title) {
+          alert("📢 COMUNICAZIONE STAFF:\n\n" + notif.title + "\n" + (notif.message || ''));
+        }
+      });
+
+      if (currentUser.id) {
+        const directNotifRef = ref(db, 'notifications/direct/' + currentUser.id);
+        onChildAdded(directNotifRef, (snapshot) => {
+          const notif = snapshot.val();
+          if (notif && notif.title) {
+            alert("🔔 MESSAGGIO PRIVATO DALLO STAFF:\n\n" + notif.title + "\n" + (notif.message || ''));
+          }
+        });
+      }
+    }
+
+    let myCatImageUrls = [];
+
+    function listenToMyCats() {
+      const catsRef = ref(db, 'cats');
+      onValue(catsRef, (snapshot) => {
+        myCatImageUrls = [];
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          Object.values(data).forEach((post) => {
+            // Ignora post eliminati
+            if (currentUser && post.author === currentUser.username && post.imageUrl && post.deleted !== true) {
+              myCatImageUrls.push(post.imageUrl);
+            }
+          });
+        }
+        respawnGardenCats();
+      });
+    }
+
+    const catsCanvas = document.getElementById('cats-canvas');
+    const catsCtx = catsCanvas.getContext('2d');
+    const activeGardenCats = [];
+
+    function resizeCatsCanvas() {
+      const box = document.getElementById('garden-container-box');
+      if (box) {
+        catsCanvas.width = box.clientWidth;
+        catsCanvas.height = box.clientHeight;
+      }
+    }
+
+    window.addEventListener('resize', () => {
+      resizeCatsCanvas();
+      respawnGardenCats();
+    });
+
+    class GardenCat {
+      constructor(imgSrc) {
+        this.radius = 34;
+        const safeW = Math.max((catsCanvas.width || 300) - this.radius * 2, 50);
+        const safeH = Math.max((catsCanvas.height || 300) - this.radius * 2, 50);
+
+        this.x = this.radius + Math.random() * safeW;
+        this.y = this.radius + Math.random() * safeH;
+        this.speedX = (Math.random() - 0.5) * 1.5;
+        if (Math.abs(this.speedX) < 0.4) this.speedX = 0.8;
+
+        this.speedY = (Math.random() - 0.5) * 1.5;
+        if (Math.abs(this.speedY) < 0.4) this.speedY = 0.8;
+
+        this.img = new Image();
+        this.img.crossOrigin = "anonymous";
+        this.img.src = imgSrc;
+      }
+
+      update() {
+        const cw = catsCanvas.width || 300;
+        const ch = catsCanvas.height || 300;
+
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        if (this.x - this.radius < 10 || this.x + this.radius > cw - 10) this.speedX *= -1;
+        if (this.y - this.radius < 10 || this.y + this.radius > ch - 10) this.speedY *= -1;
+      }
+
+      draw() {
+        catsCtx.save();
+        catsCtx.beginPath();
+        catsCtx.ellipse(this.x, this.y + this.radius - 2, this.radius * 0.8, this.radius * 0.28, 0, 0, Math.PI * 2);
+        catsCtx.fillStyle = "rgba(0, 0, 0, 0.45)";
+        catsCtx.fill();
+        catsCtx.restore();
+
+        catsCtx.save();
+        catsCtx.beginPath();
+        catsCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        catsCtx.clip();
+
+        if (this.img.complete && this.img.naturalWidth !== 0) {
+          catsCtx.drawImage(this.img, this.x - this.radius, this.y - this.radius, this.radius * 2, this.radius * 2);
+        } else {
+          catsCtx.fillStyle = '#b45309';
+          catsCtx.fill();
+        }
+        catsCtx.restore();
+
+        catsCtx.beginPath();
+        catsCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        catsCtx.strokeStyle = '#f59e0b';
+        catsCtx.lineWidth = 3.5;
+        catsCtx.stroke();
+      }
+    }
+
+    function respawnGardenCats() {
+      activeGardenCats.length = 0;
+      if (!catsCanvas.width || !catsCanvas.height) resizeCatsCanvas();
+
+      myCatImageUrls.forEach(url => {
+        activeGardenCats.push(new GardenCat(url));
+      });
+    }
+
+    function animate() {
+      catsCtx.clearRect(0, 0, catsCanvas.width, catsCanvas.height);
+
+      activeGardenCats.forEach(cat => {
+        cat.update();
+        cat.draw();
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    resizeCatsCanvas();
+    animate();
+  </script>
+  <script src="tracker.js"></script>
+
+  <!-- Registrazione Service Worker per PWA -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('Service Worker attivo:', reg.scope))
+          .catch(err => console.error('Errore SW:', err));
+      });
+    }
+  </script>
+  <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', async () => {
+      try {
+        const reg = await navigator.serviceWorker.register('./firebase-messaging-sw.js', { scope: './' });
+        console.log('Service Worker registrato con successo:', reg);
+      } catch (err) {
+        console.error('Errore registrazione Service Worker:', err);
+      }
+    });
+  }
+</script>
+  <script type="module" src="./notifications.js"></script>
+</body>
+</html>

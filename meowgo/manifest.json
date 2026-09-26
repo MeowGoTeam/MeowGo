@@ -1,0 +1,67 @@
+{
+  "short_name": "MeowGo",
+  "name": "MeowGo - Cat Community",
+  "id": "com.meowgo.app",
+  "scope": "./",
+  "start_url": "./index.html",
+  "background_color": "#ffffff",
+  "theme_color": "#b45309",
+  "display": "standalone",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Cerca Utenti",
+      "short_name": "Cerca",
+      "description": "Cerca altri utenti e profili",
+      "url": "./search.html",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Calendario Avvistamenti",
+      "short_name": "Calendario",
+      "description": "Visualizza il calendario degli avvistamenti",
+      "url": "./calendar.html",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "MeowGarden",
+      "short_name": "Giardino",
+      "description": "Accedi direttamente al tuo MeowGarden",
+      "url": "./garden.html",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Profilo, XP & Badge",
+      "short_name": "Profilo",
+      "description": "Vedi il tuo livello XP e i badge sbloccati",
+      "url": "./profile.html",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

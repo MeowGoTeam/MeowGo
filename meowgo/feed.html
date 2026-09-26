@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MeowGo - Feed 🐾</title>
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#b45309">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="./icons/icon-512.png">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #f5f0eb 0%, #e6d5c3 50%, #d4a373 100%);
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      overflow-x: hidden;
+      color: #3d312a;
+    }
+
+    .glass-card {
+      background: rgba(255, 253, 250, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(210, 180, 140, 0.4);
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 30px rgba(80, 50, 20, 0.1);
+    }
+
+    .navbar-glass {
+      background: rgba(255, 253, 250, 0.95);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(210, 180, 140, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 1030;
+    }
+
+    .cat-post-img {
+      width: 100%;
+      height: 350px;
+      object-fit: cover;
+    }
+
+    .btn-like { color: #8c7a6b; transition: transform 0.2s; }
+    .btn-like.liked { color: #dc2626; transform: scale(1.1); }
+    
+    .btn-comment, .btn-share { color: #8c7a6b; transition: transform 0.2s; }
+    .btn-comment:hover, .btn-share:hover { color: #b45309; }
+
+    .btn-earth {
+      background: linear-gradient(45deg, #88502f, #b45309);
+      color: white;
+      border: none;
+    }
+    .btn-earth:hover {
+      background: linear-gradient(45deg, #6e3f23, #92400e);
+      color: white;
+    }
+
+    .icon-btn-action {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .icon-btn-action:hover {
+      transform: scale(1.08);
+      box-shadow: 0 4px 12px rgba(180, 83, 9, 0.3);
+    }
+
+    .comment-bubble {
+      background: rgba(240, 230, 215, 0.6);
+      border-radius: 1rem;
+      padding: 0.5rem 0.8rem;
+      font-size: 0.9rem;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    /* Template isolato per la generazione dell'immagine di condivisione */
+    #share-template-container {
+      position: absolute;
+      left: -9999px;
+      top: -9999px;
+      width: 500px;
+    }
+
+    .share-card-layout {
+      background: #fffdfa;
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      border: 2px solid #d2b48c;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+  </style>
+</head>
+<body class="pb-5">
+  <script>
+    if (!localStorage.getItem('meowgo_test_user')) location.replace('index.html');
+  </script>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light navbar-glass mb-4">
+    <div class="container">
+      <a class="navbar-brand fw-black fs-3 text-dark d-flex align-items-center gap-2" href="feed.html">
+        <i class="fa-solid fa-cat" style="color: #b45309;"></i> MeowGo
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto gap-2 mt-2 mt-lg-0" id="nav-links"></ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container position-relative z-1">
+    <section id="feed-page" class="page-section active">
+      <div class="row justify-content-center">
+        <div class="col-lg-7">
+          
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold mb-0 text-dark">
+              <i class="fa-solid fa-earth-americas" style="color: #b45309;"></i> Community Feed
+            </h3>
+            
+            <div class="d-flex align-items-center gap-2">
+              <a href="search.html" class="btn btn-earth icon-btn-action shadow-sm" title="Cerca Utenti">
+                <i class="fa-solid fa-magnifying-glass"></i>
+              </a>
+              <a href="profile.html" class="btn btn-earth icon-btn-action shadow-sm" title="Nuovo Avvistamento">
+                <i class="fa-solid fa-plus"></i>
+              </a>
+              <a href="calendar.html" class="btn btn-earth icon-btn-action shadow-sm" title="Calendario">
+                <i class="fa-solid fa-calendar-days"></i>
+              </a>
+            </div>
+          </div>
+
+          <div id="feed-container" class="d-flex flex-column gap-4"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Modal Opzioni Condivisione -->
+  <div class="modal fade" id="shareModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content glass-card border-0">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-bold text-dark"><i class="fa-solid fa-share-nodes me-2" style="color: #b45309;"></i>Condividi Post</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body d-flex flex-column gap-3 py-4">
+          <button class="btn btn-outline-dark p-3 rounded-4 d-flex align-items-center justify-content-between" onclick="sharePostLink()">
+            <span class="fw-bold"><i class="fa-solid fa-link me-2 text-warning"></i> Condividi Link del Post</span>
+            <i class="fa-solid fa-chevron-right text-muted"></i>
+          </button>
+          <button class="btn btn-earth p-3 rounded-4 d-flex align-items-center justify-content-between" onclick="sharePostImage()">
+            <span class="fw-bold"><i class="fa-solid fa-image me-2"></i> Condividi Card Immagine</span>
+            <i class="fa-solid fa-download"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Container Nascosto per Generazione Immagine Card Clean -->
+  <div id="share-template-container">
+    <div id="share-card-target" class="share-card-layout">
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <i class="fa-solid fa-circle-user fs-2 text-warning"></i>
+        <div>
+          <div class="fw-bold text-dark fs-5" id="card-share-author">@username</div>
+          <div class="small text-muted" id="card-share-date">Data</div>
+        </div>
+        <div class="ms-auto fw-black fs-4 text-dark d-flex align-items-center gap-1">
+          <i class="fa-solid fa-cat" style="color: #b45309;"></i> MeowGo
+        </div>
+      </div>
+      <img id="card-share-img" src="" class="w-100 rounded-4 mb-3" style="height: 350px; object-fit: cover;" crossorigin="anonymous">
+      <div class="d-flex justify-content-between align-items-center">
+        <h3 class="fw-bold text-dark mb-0" id="card-share-name">Nome Gatto</h3>
+        <div class="badge fs-6 bg-light text-dark border border-warning-subtle rounded-pill px-3 py-2">
+          <i class="fa-solid fa-heart text-danger me-1"></i> <span id="card-share-likes">0</span> Mi piace
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Library for HTML to Canvas Conversion -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, get, update, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDAwgqotGF0BTUGBjxOMseMMfXpBZdAUTI",
+      authDomain: "meowmaster-51991.firebaseapp.com",
+      databaseURL: "https://meowmaster-51991-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "meowmaster-51991",
+      storageBucket: "meowmaster-51991.firebasestorage.app",
+      messagingSenderId: "1079993425259",
+      appId: "1:1079993425259:web:1aa6a9e5f0a65b6ee4802e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    let selectedPostForShare = null;
+    let shareModalInstance = null;
+
+    function getCurrentUser() {
+      return JSON.parse(localStorage.getItem('meowgo_test_user')) || null;
+    }
+    function clearCurrentUser() {
+      localStorage.removeItem('meowgo_test_user');
+    }
+
+    function renderNavbar(activePage) {
+      const currentUser = getCurrentUser();
+      const navLinks = document.getElementById('nav-links');
+
+      if (currentUser) {
+        navLinks.innerHTML = `
+          <li class="nav-item"><a class="nav-link fw-bold ${activePage === 'feed' ? 'text-warning' : 'text-dark'}" href="feed.html"><i class="fa-solid fa-newspaper"></i> Feed</a></li>
+          <li class="nav-item"><a class="nav-link fw-bold ${activePage === 'garden' ? 'text-warning' : 'text-success'}" href="garden.html"><i class="fa-solid fa-tree"></i> MeowGarden</a></li>
+          <li class="nav-item"><a class="nav-link fw-bold ${activePage === 'profile' ? 'text-warning' : 'text-dark'}" href="profile.html"><i class="fa-solid fa-user"></i> Profilo (${currentUser.username})</a></li>
+          <li class="nav-item"><a class="nav-link fw-bold text-danger" href="#" id="logout-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+        `;
+        document.getElementById('logout-link')?.addEventListener('click', (e) => {
+          e.preventDefault();
+          clearCurrentUser();
+          window.location.href = 'index.html';
+        });
+      } else {
+        window.location.replace('index.html');
+      }
+      return currentUser;
+    }
+
+    const currentUser = renderNavbar('feed');
+    if (currentUser) {
+      listenToFeed();
+      setupNotificationsListener(currentUser);
+
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').then(reg => {
+          console.log('Service Worker attivo per le notifiche di sistema.');
+        });
+      }
+    }
+
+    function setupNotificationsListener(user) {
+      const globalRef = ref(db, 'notifications/global');
+      onValue(globalRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const globals = snapshot.val();
+          let dismissed = JSON.parse(localStorage.getItem('dismissed_globals') || '[]');
+
+          for (let id in globals) {
+            if (!dismissed.includes(id)) {
+              showSystemNotification(globals[id].title || 'MeowGo', globals[id].message || globals[id].body || 'Nuova notifica');
+              dismissed.push(id);
+              localStorage.setItem('dismissed_globals', JSON.stringify(dismissed));
+            }
+          }
+        }
+      });
+
+      if (user && user.id) {
+        const directRef = ref(db, `notifications/direct/${user.id}`);
+        onValue(directRef, async (snapshot) => {
+          if (snapshot.exists()) {
+            const directs = snapshot.val();
+            for (let id in directs) {
+              const n = directs[id];
+              showSystemNotification(n.title || 'MeowGo', n.message || n.body || 'Hai un nuovo messaggio');
+              await remove(ref(db, `notifications/direct/${user.id}/${id}`));
+            }
+          }
+        });
+      }
+    }
+
+    function showSystemNotification(title, body) {
+      if ('Notification' in window && Notification.permission === 'granted') {
+        navigator.serviceWorker.ready.then((registration) => {
+          registration.showNotification(title, {
+            body: body,
+            icon: './icons/icon-192.png',
+            badge: './icons/icon-192.png',
+            vibrate: [100, 50, 100]
+          });
+        });
+      }
+    }
+
+    function formatPostTimestamp(post) {
+      if (post.date && post.time) {
+        return `${post.date} - ${post.time}`;
+      } else if (post.createdAt) {
+        const d = new Date(post.createdAt);
+        return `${d.toLocaleDateString('it-IT')} - ${d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+      }
+      return post.time || '';
+    }
+
+    function listenToFeed() {
+      const catsRef = ref(db, 'cats');
+      onValue(catsRef, (snapshot) => {
+        const container = document.getElementById('feed-container');
+        container.innerHTML = '';
+
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          const catList = Object.keys(data).map(key => ({ id: key, ...data[key] })).reverse();
+
+          catList.forEach((post) => {
+            if (post.deleted === true) return;
+
+            const likesMap = post.likes || {};
+            const likesCount = Object.keys(likesMap).length;
+            const isLiked = currentUser && likesMap[currentUser.id];
+            
+            const commentsMap = post.comments || {};
+            const commentsCount = Object.keys(commentsMap).length;
+
+            const dateTimeStr = formatPostTimestamp(post);
+
+            const card = document.createElement('div');
+            card.className = "glass-card overflow-hidden";
+            card.innerHTML = `
+              <div class="p-3 d-flex align-items-center gap-2 border-bottom">
+                <div class="fw-bold text-dark" style="cursor: pointer;" onclick="window.location.href='profile-view.html?user=${encodeURIComponent(post.author)}'">
+                  <i class="fa-solid fa-circle-user text-warning"></i> ${post.author}
+                </div>
+                <span class="small text-muted ms-auto"><i class="fa-regular fa-calendar-days me-1"></i>${dateTimeStr}</span>
+              </div>
+              <img src="${post.imageUrl}" class="cat-post-img" alt="${post.catName}">
+              <div class="p-3">
+                <div class="d-flex align-items-center gap-3 mb-2">
+                  <button class="btn btn-link p-0 text-decoration-none btn-like fs-4 ${isLiked ? 'liked' : ''}" onclick="toggleLike('${post.id}')">
+                    <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+                  </button>
+                  <span class="fw-bold text-dark">${likesCount}</span>
+
+                  <button class="btn btn-link p-0 text-decoration-none btn-comment fs-4 ms-2" onclick="toggleCommentsSection('${post.id}')" title="Commenti">
+                    <i class="fa-regular fa-comment"></i>
+                  </button>
+                  <span class="fw-bold text-dark" id="comments-count-${post.id}">${commentsCount}</span>
+
+                  <button class="btn btn-link p-0 text-decoration-none btn-share fs-4 ms-auto" onclick="openShareModal('${post.id}')" title="Condividi">
+                    <i class="fa-solid fa-share-nodes"></i>
+                  </button>
+                </div>
+                <h5 class="fw-bold text-dark mb-2">${post.catName}</h5>
+
+                <!-- SEZIONE COMMENTI -->
+                <div id="comments-box-${post.id}" class="d-none mt-3 pt-3 border-top">
+                  <div class="fw-bold small text-muted mb-2"><i class="fa-solid fa-comments me-1"></i> Commenti della community</div>
+                  <div id="comments-list-${post.id}" class="mb-3" style="max-height: 200px; overflow-y: auto;">
+                  </div>
+
+                  <div class="small text-muted mb-1">Scegli un commento rapido:</div>
+                  <div class="d-flex flex-wrap gap-1">
+                    <button class="btn btn-sm btn-outline-secondary rounded-pill" onclick="postComment('${post.id}', '❤️ Adorabile!')">❤️ Adorabile!</button>
+                    <button class="btn btn-sm btn-outline-secondary rounded-pill" onclick="postComment('${post.id}', '📸 Che foto!')">📸 Che foto!</button>
+                    <button class="btn btn-sm btn-outline-secondary rounded-pill" onclick="postComment('${post.id}', '👋 Ciao micio!')">👋 Ciao micio!</button>
+                    <button class="btn btn-sm btn-outline-secondary rounded-pill" onclick="postComment('${post.id}', '😻')">😻</button>
+                    <button class="btn btn-sm btn-outline-secondary rounded-pill" onclick="postComment('${post.id}', '😼')">😼</button>
+                    <button class="btn btn-sm btn-outline-secondary rounded-pill" onclick="postComment('${post.id}', '😹')">😹</button>
+                  </div>
+                </div>
+
+              </div>
+            `;
+            container.appendChild(card);
+            
+            listenToComments(post.id);
+          });
+
+          // Gestione condivisione tramite dataset
+          window.openShareModal = (postId) => {
+            selectedPostForShare = catList.find(p => p.id === postId);
+            if (!shareModalInstance) {
+              shareModalInstance = new bootstrap.Modal(document.getElementById('shareModal'));
+            }
+            shareModalInstance.show();
+          };
+        }
+      });
+    }
+
+    window.toggleLike = async function (postId) {
+      if (!currentUser) return;
+      const likeRef = ref(db, `cats/${postId}/likes/${currentUser.id}`);
+      const snap = await get(likeRef);
+      if (snap.exists()) {
+        await update(ref(db, `cats/${postId}/likes`), { [currentUser.id]: null });
+      } else {
+        await update(ref(db, `cats/${postId}/likes`), { [currentUser.id]: true });
+      }
+    };
+
+    window.toggleCommentsSection = function (postId) {
+      const box = document.getElementById(`comments-box-${postId}`);
+      if (box) {
+        box.classList.toggle('d-none');
+      }
+    };
+
+    window.postComment = async function (postId, text) {
+      if (!currentUser) return;
+      const commentsRef = ref(db, `cats/${postId}/comments`);
+      await push(commentsRef, {
+        author: currentUser.username,
+        text: text,
+        createdAt: Date.now()
+      });
+    };
+
+    window.deleteComment = async function (postId, commentId) {
+      if (!currentUser) return;
+      await remove(ref(db, `cats/${postId}/comments/${commentId}`));
+    };
+
+    window.sharePostLink = async function () {
+      if (!selectedPostForShare) return;
+      const shareUrl = `${window.location.origin}${window.location.pathname}#post-${selectedPostForShare.id}`;
+      
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: `MeowGo - ${selectedPostForShare.catName}`,
+            text: `Guarda questo post di ${selectedPostForShare.author} su MeowGo!`,
+            url: shareUrl,
+          });
+        } catch (err) {
+          console.log('Condivisione annullata');
+        }
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        alert('Link copiato negli appunti!');
+      }
+      shareModalInstance.hide();
+    };
+
+    window.sharePostImage = async function () {
+      if (!selectedPostForShare) return;
+
+      // Popola il template di condivisione pulito (senza commenti)
+      document.getElementById('card-share-author').textContent = selectedPostForShare.author;
+      document.getElementById('card-share-date').textContent = formatPostTimestamp(selectedPostForShare);
+      document.getElementById('card-share-name').textContent = selectedPostForShare.catName;
+      document.getElementById('card-share-likes').textContent = Object.keys(selectedPostForShare.likes || {}).length;
+      
+      const imgTarget = document.getElementById('card-share-img');
+      imgTarget.src = selectedPostForShare.imageUrl;
+
+      // Attende il caricamento dell'immagine nel DOM nascosto
+      imgTarget.onload = async () => {
+        const shareTarget = document.getElementById('share-card-target');
+        const canvas = await html2canvas(shareTarget, { useCORS: true, allowTaint: true, scale: 2 });
+        
+        canvas.toBlob(async (blob) => {
+          const file = new File([blob], `${selectedPostForShare.catName}_meowgo.png`, { type: 'image/png' });
+          
+          if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+              await navigator.share({
+                files: [file],
+                title: selectedPostForShare.catName,
+                text: `Post di ${selectedPostForShare.author} su MeowGo!`,
+              });
+            } catch (e) {
+              console.log('Condivisione immagine annullata');
+            }
+          } else {
+            // Fallback: download dell'immagine
+            const link = document.createElement('a');
+            link.download = `${selectedPostForShare.catName}_meowgo.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+          }
+          shareModalInstance.hide();
+        });
+      };
+    };
+
+    function listenToComments(postId) {
+      const commentsRef = ref(db, `cats/${postId}/comments`);
+      onValue(commentsRef, (snapshot) => {
+        const listContainer = document.getElementById(`comments-list-${postId}`);
+        const countSpan = document.getElementById(`comments-count-${postId}`);
+        if (!listContainer) return;
+
+        listContainer.innerHTML = '';
+
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          const commentKeys = Object.keys(data);
+          
+          if (countSpan) countSpan.textContent = commentKeys.length;
+
+          commentKeys.forEach(key => {
+            const comment = data[key];
+            const isOwner = currentUser && comment.author === currentUser.username;
+
+            const bubble = document.createElement('div');
+            bubble.className = 'comment-bubble';
+            bubble.innerHTML = `
+              <div><strong>${comment.author}:</strong> ${comment.text}</div>
+              ${isOwner ? `<button class="btn btn-link text-danger p-0 ms-auto" onclick="deleteComment('${postId}', '${key}')" title="Elimina commento"><i class="fa-solid fa-trash-can fa-sm"></i></button>` : ''}
+            `;
+            listContainer.appendChild(bubble);
+          });
+        } else {
+          if (countSpan) countSpan.textContent = '0';
+          listContainer.innerHTML = '<div class="text-muted small fst-italic">Nessun commento ancora. Sii il primo a commentare con un tocco!</div>';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

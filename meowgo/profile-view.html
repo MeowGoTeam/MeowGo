@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MeowGo - Profilo Utente 🐾</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #f5f0eb 0%, #e6d5c3 50%, #d4a373 100%);
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      color: #3d312a;
+    }
+    .glass-card {
+      background: rgba(255, 253, 250, 0.92);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(210, 180, 140, 0.4);
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 30px rgba(80, 50, 20, 0.1);
+    }
+    .avatar-circle {
+      width: 90px; height: 90px;
+      background: linear-gradient(45deg, #d97706, #b45309);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem;
+      border: 3px solid #fff;
+      color: white;
+      object-fit: cover;
+    }
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    .grid-thumbnail {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+    .grid-thumbnail:hover {
+      opacity: 0.85;
+      transform: scale(0.98);
+    }
+    .badge-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 8px;
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid rgba(210, 180, 140, 0.3);
+      width: 85px;
+    }
+    .badge-icon-box {
+      font-size: 1.3rem;
+      background: #fffbeb;
+      border: 1px solid #f59e0b;
+      border-radius: 50%;
+      width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      color: #b45309;
+      margin-bottom: 4px;
+      box-shadow: 0 2px 6px rgba(245, 158, 11, 0.2);
+    }
+    .ig-modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85); z-index: 2000;
+      display: none; align-items: center; justify-content: center;
+      padding: 15px;
+    }
+    .ig-modal-content {
+      background: #fff; border-radius: 1rem; max-width: 500px; width: 100%; overflow: hidden; position: relative;
+    }
+    .ig-modal-img {
+      width: 100%; height: 400px; object-fit: cover;
+    }
+    .ig-nav-btn {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: rgba(0,0,0,0.5); color: #fff; border: none; border-radius: 50%;
+      width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    }
+    .ig-prev { left: 10px; }
+    .ig-next { right: 10px; }
+  </style>
+</head>
+<body class="pb-5">
+  <div class="container py-4">
+    <div class="d-flex mb-3">
+      <a href="search.html" class="btn btn-secondary rounded-pill px-3"><i class="fa-solid fa-arrow-left me-1"></i> Torna alla Ricerca</a>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <!-- Info Profilo, XP e Livello -->
+        <div class="glass-card p-4 mb-4 text-center">
+          <div class="d-flex justify-content-center mb-3">
+            <div id="profile-avatar-container">
+              <div class="avatar-circle" id="profile-initial">?</div>
+            </div>
+          </div>
+          <h3 class="fw-bold mb-1" id="profile-username">Caricamento...</h3>
+          <p class="text-muted small mb-3" id="profile-level-text">Livello 1 • 0 XP</p>
+
+          <!-- Barra Progresso XP (1000 XP per livello) -->
+          <div class="px-4 mb-4">
+            <div class="progress" style="height: 10px; border-radius: 5px;">
+              <div id="profile-xp-bar" class="progress-bar bg-warning" role="progressbar" style="width: 0%;"></div>
+            </div>
+            <small class="text-muted mt-1 d-block" id="profile-xp-detail">0 / 1000 XP</small>
+          </div>
+
+          <div class="mt-3">
+            <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-award text-warning"></i> Badge & Traguardi</h6>
+            <div class="d-flex justify-content-center gap-2 flex-wrap" id="profile-badges">
+              <span class="text-muted small">Nessun badge sbloccato</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Griglia Post Profilo -->
+        <div class="glass-card p-3">
+          <h5 class="fw-bold mb-3 text-dark"><i class="fa-solid fa-images"></i> Post di <span id="grid-owner-name">...</span></h5>
+          <div class="profile-grid" id="user-posts-grid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Stile Instagram per scorrere i post -->
+  <div class="ig-modal-overlay" id="ig-modal">
+    <div class="ig-modal-content">
+      <div class="p-3 d-flex align-items-center justify-content-between border-bottom">
+        <div class="fw-bold" id="modal-author">Autore</div>
+        <button class="btn-close" id="ig-close-btn"></button>
+      </div>
+      <div class="position-relative">
+        <img src="" class="ig-modal-img" id="modal-img">
+        <button class="ig-nav-btn ig-prev" id="ig-prev-btn"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="ig-nav-btn ig-next" id="ig-next-btn"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+      <div class="p-3">
+        <h5 class="fw-bold text-dark mb-1" id="modal-cat-name">Nome Gatto</h5>
+        <p class="text-muted small mb-0" id="modal-date"></p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDAwgqotGF0BTUGBjxOMseMMfXpBZdAUTI",
+      authDomain: "meowmaster-51991.firebaseapp.com",
+      databaseURL: "https://meowmaster-51991-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "meowmaster-51991",
+      storageBucket: "meowmaster-51991.firebasestorage.app",
+      messagingSenderId: "1079993425259",
+      appId: "1:1079993425259:web:1aa6a9e5f0a65b6ee4802e"
+    };
+
+    const db = getDatabase(initializeApp(firebaseConfig));
+    const urlParams = new URLSearchParams(window.location.search);
+    const targetUsername = urlParams.get('user');
+
+    let userPosts = [];
+    let currentPostIndex = 0;
+
+    async function loadUserProfile() {
+      if (!targetUsername) {
+        document.getElementById('profile-username').innerText = "Utente non specificato";
+        return;
+      }
+
+      document.getElementById('profile-username').innerText = targetUsername;
+      document.getElementById('grid-owner-name').innerText = targetUsername;
+      document.getElementById('modal-author').innerText = targetUsername;
+
+      // 1. Caricamento Dati Utente (XP, Livello, Badge, Avatar)
+      const usersSnap = await get(ref(db, 'users'));
+      if (usersSnap.exists()) {
+        const users = usersSnap.val();
+        let userEntry = null;
+        
+        // Cerca l'utente confrontando lo username (o la chiave se coincide)
+        for (const [uid, uData] of Object.entries(users)) {
+          if (uData.username === targetUsername || uid === targetUsername) {
+            userEntry = uData;
+            break;
+          }
+        }
+
+        if (userEntry) {
+          // Avatar
+          if (userEntry.avatarUrl) {
+            document.getElementById('profile-avatar-container').innerHTML = `<img src="${userEntry.avatarUrl}" class="avatar-circle">`;
+          } else {
+            document.getElementById('profile-initial').innerText = targetUsername.charAt(0).toUpperCase();
+          }
+
+          // XP e Livello (1 livello ogni 1000 XP)
+          const xp = Number(userEntry.xp) || 0;
+          const level = Math.floor(xp / 1000) + 1;
+          const xpInLevel = xp % 1000;
+          const percent = (xpInLevel / 1000) * 100;
+          
+          document.getElementById('profile-level-text').innerText = `Livello ${level} • ${xp} XP totali`;
+          document.getElementById('profile-xp-bar').style.width = `${percent}%`;
+          document.getElementById('profile-xp-detail').innerText = `${xpInLevel} / 1000 XP al prossimo livello`;
+
+          // Badge / Achievements
+          if (userEntry.badges) {
+            const badgesContainer = document.getElementById('profile-badges');
+            badgesContainer.innerHTML = '';
+            
+            Object.entries(userEntry.badges).forEach(([badgeKey, badgeData]) => {
+              // Gestisce sia se è un booleano (es. badges: { cacciatore: true }) sia un oggetto strutturato
+              const title = (typeof badgeData === 'object' && badgeData.title) ? badgeData.title : badgeKey;
+              const icon = (typeof badgeData === 'object' && badgeData.icon) ? badgeData.icon : 'fa-medal';
+              
+              badgesContainer.innerHTML += `
+                <div class="badge-item" title="${title}">
+                  <div class="badge-icon-box"><i class="fa-solid ${icon}"></i></div>
+                  <span class="small fw-bold text-dark text-truncate w-100">${title}</span>
+                </div>
+              `;
+            });
+          }
+        } else {
+          document.getElementById('profile-initial').innerText = targetUsername.charAt(0).toUpperCase();
+        }
+      }
+
+      // 2. Caricamento Post (controllando sia 'author' che eventuali riferimenti utente)
+      const postsSnap = await get(ref(db, 'cats'));
+      const gridContainer = document.getElementById('user-posts-grid');
+      gridContainer.innerHTML = '';
+      userPosts = [];
+
+      if (postsSnap.exists()) {
+        const postsData = postsSnap.val();
+        Object.keys(postsData).forEach(key => {
+          const post = postsData[key];
+          // Verifica se il post appartiene all'utente (tramite username o userId)
+          if (!post.deleted && (post.author === targetUsername || post.username === targetUsername)) {
+            userPosts.push({ id: key, ...post });
+          }
+        });
+
+        if (userPosts.length > 0) {
+          userPosts.forEach((post, index) => {
+            const thumb = document.createElement('img');
+            thumb.src = post.imageUrl || post.image;
+            thumb.className = 'grid-thumbnail';
+            thumb.addEventListener('click', () => openIgModal(index));
+            gridContainer.appendChild(thumb);
+          });
+        } else {
+          gridContainer.innerHTML = `<div class="text-muted text-center py-3" style="grid-column: span 4;">Nessun post pubblicato.</div>`;
+        }
+      }
+    }
+
+    function openIgModal(index) {
+      currentPostIndex = index;
+      updateModalContent();
+      document.getElementById('ig-modal').style.display = 'flex';
+    }
+
+    function updateModalContent() {
+      const post = userPosts[currentPostIndex];
+      document.getElementById('modal-img').src = post.imageUrl || post.image;
+      document.getElementById('modal-cat-name').innerText = post.catName || post.title || 'Senza nome';
+      document.getElementById('modal-date').innerText = post.date || post.createdAt || '';
+    }
+
+    document.getElementById('ig-prev-btn').addEventListener('click', () => {
+      if (currentPostIndex > 0) {
+        currentPostIndex--;
+        updateModalContent();
+      }
+    });
+
+    document.getElementById('ig-next-btn').addEventListener('click', () => {
+      if (currentPostIndex < userPosts.length - 1) {
+        currentPostIndex++;
+        updateModalContent();
+      }
+    });
+
+    document.getElementById('ig-close-btn').addEventListener('click', () => {
+      document.getElementById('ig-modal').style.display = 'none';
+    });
+
+    document.getElementById('ig-modal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('ig-modal')) {
+        document.getElementById('ig-modal').style.display = 'none';
+      }
+    });
+
+    loadUserProfile();
+  </script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MeowGo - Cerca Utenti 🐾</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #f5f0eb 0%, #e6d5c3 50%, #d4a373 100%);
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      color: #3d312a;
+    }
+    .glass-card {
+      background: rgba(255, 253, 250, 0.92);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(210, 180, 140, 0.4);
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 30px rgba(80, 50, 20, 0.1);
+    }
+    .search-result-item {
+      padding: 12px 15px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      border-bottom: 1px solid #f3f4f6;
+      text-decoration: none;
+      color: #3d312a;
+      transition: background 0.2s;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      background: #fff;
+    }
+    .search-result-item:hover {
+      background: #fdfbf7;
+      color: #b45309;
+    }
+    .search-avatar {
+      width: 50px; height: 50px; border-radius: 50%; object-fit: cover; background: #b45309; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body class="py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-7">
+        
+        <div class="d-flex align-items-center mb-4">
+          <a href="feed.html" class="btn btn-secondary rounded-pill px-3 me-3"><i class="fa-solid fa-arrow-left me-1"></i> Indietro</a>
+          <h3 class="fw-bold mb-0"><i class="fa-solid fa-magnifying-glass text-warning me-2"></i> Cerca Profili</h3>
+        </div>
+
+        <div class="glass-card p-3 mb-4 shadow-sm">
+          <div class="input-group">
+            <span class="input-group-text bg-transparent border-0"><i class="fa-solid fa-user text-muted"></i></span>
+            <input type="text" id="search-input" class="form-control bg-transparent border-0 shadow-none fs-5" placeholder="Digita il nome utente da cercare..." autofocus>
+          </div>
+        </div>
+
+        <div id="search-results" class="d-flex flex-column gap-2"></div>
+
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDAwgqotGF0BTUGBjxOMseMMfXpBZdAUTI",
+      authDomain: "meowmaster-51991.firebaseapp.com",
+      databaseURL: "https://meowmaster-51991-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "meowmaster-51991",
+      storageBucket: "meowmaster-51991.firebasestorage.app",
+      messagingSenderId: "1079993425259",
+      appId: "1:1079993425259:web:1aa6a9e5f0a65b6ee4802e"
+    };
+
+    const db = getDatabase(initializeApp(firebaseConfig));
+    const searchInput = document.getElementById('search-input');
+    const resultsContainer = document.getElementById('search-results');
+
+    searchInput.addEventListener('input', async (e) => {
+      const query = e.target.value.trim().toLowerCase();
+      resultsContainer.innerHTML = '';
+
+      if (query.length < 2) return;
+
+      const usersSnap = await get(ref(db, 'users'));
+      if (usersSnap.exists()) {
+        let found = false;
+        Object.values(usersSnap.val()).forEach(user => {
+          if (user.username && user.username.toLowerCase().includes(query)) {
+            found = true;
+            const avatarHtml = user.avatarUrl 
+              ? `<img src="${user.avatarUrl}" class="search-avatar">` 
+              : `<div class="search-avatar">${user.username.charAt(0).toUpperCase()}</div>`;
+            
+            resultsContainer.innerHTML += `
+              <a href="profile-view.html?user=${encodeURIComponent(user.username)}" class="search-result-item shadow-sm">
+                ${avatarHtml}
+                <div>
+                  <div class="fw-bold fs-5">${user.username}</div>
+                  <small class="text-muted">Clicca per visitare il profilo</small>
+                </div>
+              </a>
+            `;
+          }
+        });
+
+        if (!found) {
+          resultsContainer.innerHTML = `<div class="glass-card p-4 text-center text-muted">Nessun utente trovato con questo nome.</div>`;
+        }
+      }
+    });
+  </script>
+</body>
+</html>

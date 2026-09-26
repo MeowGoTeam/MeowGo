@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MeowGo - Calendario 🐾</title>
+
+  <!-- PWA Manifest & Icone Mobile -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#b45309">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="./icons/icon-512.png">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f5f0eb 0%, #e6d5c3 50%, #d4a373 100%);
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      color: #3d312a;
+      overflow-x: hidden;
+    }
+
+    .glass-card {
+      background: rgba(255, 253, 250, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(210, 180, 140, 0.4);
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 30px rgba(80, 50, 20, 0.1);
+    }
+
+    /* Navbar Sticky */
+    .navbar-glass {
+      background: rgba(255, 253, 250, 0.95);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(210, 180, 140, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 1030;
+      transition: transform 0.3s ease-in-out;
+      will-change: transform;
+    }
+
+    .navbar-hidden {
+      transform: translateY(-100%);
+    }
+
+    .btn-earth {
+      background: linear-gradient(45deg, #88502f, #b45309);
+      color: white;
+      border: none;
+    }
+    .btn-earth:hover {
+      background: linear-gradient(45deg, #6e3f23, #92400e);
+      color: white;
+    }
+
+    /* --- GRIGLIA CALENDARIO COMPATTA --- */
+    .calendar-container {
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      width: 100%;
+    }
+
+    .calendar-day-header {
+      text-align: center;
+      font-weight: bold;
+      font-size: 0.75rem;
+      color: #8c7a6b;
+      padding: 4px 0;
+    }
+
+    .calendar-day-cell {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 0.6rem;
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(210, 180, 140, 0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+    }
+
+    .calendar-day-cell:hover {
+      background: rgba(255, 255, 255, 0.95);
+      border-color: #b45309;
+    }
+
+    .calendar-day-cell.empty {
+      background: transparent;
+      border: none;
+      cursor: default;
+    }
+
+    .calendar-day-cell.today {
+      border: 2px solid #b45309;
+      font-weight: bold;
+    }
+
+    .calendar-day-cell.has-events {
+      background: #fef3c7;
+      border-color: #f59e0b;
+    }
+
+    .event-badge {
+      position: absolute;
+      bottom: 2px;
+      background: #b45309;
+      color: white;
+      border-radius: 50%;
+      width: 15px;
+      height: 15px;
+      font-size: 0.6rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    .calendar-day-cell span.day-number {
+      margin-bottom: 8px;
+    }
+
+    /* --- STILI POST COME NEL FEED --- */
+    .cat-post-img {
+      width: 100%;
+      height: 350px;
+      object-fit: cover;
+    }
+
+    .btn-like { color: #8c7a6b; transition: transform 0.2s; }
+    .btn-like.liked { color: #dc2626; transform: scale(1.1); }
+
+    @media (max-width: 400px) {
+      .glass-card-calendar {
+        padding: 1rem !important;
+      }
+      .calendar-grid {
+        gap: 2px;
+      }
+      .calendar-day-cell {
+        font-size: 0.75rem;
+        border-radius: 0.4rem;
+      }
+      .event-badge {
+        width: 13px;
+        height: 13px;
+        font-size: 0.55rem;
+        bottom: 1px;
+      }
+      .calendar-day-cell span.day-number {
+        margin-bottom: 6px;
+      }
+      .cat-post-img {
+        height: 280px;
+      }
+    }
+  </style>
+</head>
+<body class="pb-5">
+  <script>
+    if (!localStorage.getItem('meowgo_test_user')) location.replace('index.html');
+  </script>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light navbar-glass mb-4">
+    <div class="container">
+      <a class="navbar-brand fw-black fs-3 text-dark d-flex align-items-center gap-2" href="feed.html">
+        <i class="fa-solid fa-cat" style="color: #b45309;"></i> MeowGo
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto gap-2 mt-2 mt-lg-0" id="nav-links"></ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container px-2 px-sm-3">
+    <div class="row justify-content-center">
+      <div class="col-lg-7">
+        
+        <!-- Box Calendario -->
+        <div class="glass-card glass-card-calendar p-3 p-sm-4 mb-4 calendar-container">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <button class="btn btn-earth btn-sm rounded-circle px-3" id="prev-month">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <h5 class="fw-bold mb-0 text-dark" id="current-month-display">---</h5>
+            <button class="btn btn-earth btn-sm rounded-circle px-3" id="next-month">
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
+
+          <div class="calendar-grid mb-1">
+            <div class="calendar-day-header">Lun</div>
+            <div class="calendar-day-header">Mar</div>
+            <div class="calendar-day-header">Mer</div>
+            <div class="calendar-day-header">Gio</div>
+            <div class="calendar-day-header">Ven</div>
+            <div class="calendar-day-header">Sab</div>
+            <div class="calendar-day-header">Dom</div>
+          </div>
+
+          <div class="calendar-grid" id="calendar-days-grid"></div>
+        </div>
+
+        <!-- Titolo Sezione del Giorno Selezionato -->
+        <h4 class="fw-bold mb-3 text-dark d-flex align-items-center gap-2" id="selected-date-title">
+          <i class="fa-solid fa-calendar-day" style="color: #b45309;"></i> Seleziona un giorno
+        </h4>
+
+        <!-- Container Post Interi del Giorno -->
+        <div id="day-events-container" class="d-flex flex-column gap-4">
+          <div class="glass-card p-4 text-center">
+            <p class="text-muted mb-0">Clicca su una data nel calendario per visualizzare tutti gli avvistamenti associati.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, get, update, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDAwgqotGF0BTUGBjxOMseMMfXpBZdAUTI",
+      authDomain: "meowmaster-51991.firebaseapp.com",
+      databaseURL: "https://meowmaster-51991-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "meowmaster-51991",
+      storageBucket: "meowmaster-51991.firebasestorage.app",
+      messagingSenderId: "1079993425259",
+      appId: "1:1079993425259:web:1aa6a9e5f0a65b6ee4802e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    function getCurrentUser() {
+      return JSON.parse(localStorage.getItem('meowgo_test_user')) || null;
+    }
+    function clearCurrentUser() {
+      localStorage.removeItem('meowgo_test_user');
+    }
+
+    function renderNavbar() {
+      const currentUser = getCurrentUser();
+      const navLinks = document.getElementById('nav-links');
+
+      if (currentUser) {
+        navLinks.innerHTML = `
+          <li class="nav-item"><a class="nav-link fw-bold text-dark" href="feed.html"><i class="fa-solid fa-newspaper"></i> Feed</a></li>
+          <li class="nav-item"><a class="nav-link fw-bold text-success" href="garden.html"><i class="fa-solid fa-tree"></i> MeowGarden</a></li>
+          <li class="nav-item"><a class="nav-link fw-bold text-dark" href="profile.html"><i class="fa-solid fa-user"></i> Profilo (${currentUser.username})</a></li>
+          <li class="nav-item"><a class="nav-link fw-bold text-danger" href="#" id="logout-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+        `;
+        document.getElementById('logout-link')?.addEventListener('click', (e) => {
+          e.preventDefault();
+          clearCurrentUser();
+          window.location.href = 'index.html';
+        });
+      } else {
+        window.location.replace('index.html');
+      }
+      return currentUser;
+    }
+
+    const currentUser = renderNavbar();
+
+    let currentDate = new Date();
+    let postsData = [];
+    let selectedDateStr = null;
+
+    const monthNames = [
+      "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
+      "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"
+    ];
+
+    function formatPostTimestamp(post) {
+      if (post.date && post.time) {
+        return `${post.date} - ${post.time}`;
+      } else if (post.createdAt) {
+        const d = new Date(post.createdAt);
+        return `${d.toLocaleDateString('it-IT')} - ${d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+      }
+      return post.time || '';
+    }
+
+    const catsRef = ref(db, 'cats');
+    onValue(catsRef, (snapshot) => {
+      postsData = [];
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        postsData = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+      }
+      renderCalendar();
+      if (selectedDateStr) {
+        const eventsOnSelectedDay = getEventsForDate(selectedDateStr);
+        showDayEvents(selectedDateStr, eventsOnSelectedDay);
+      }
+    });
+
+    function getEventsForDate(dateStr) {
+      return postsData.filter(post => {
+        if (post.date) return post.date === dateStr;
+        if (post.createdAt) {
+          const d = new Date(post.createdAt);
+          const postDateStr = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+          return postDateStr === dateStr;
+        }
+        return false;
+      });
+    }
+
+    function renderCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+
+      document.getElementById('current-month-display').innerText = `${monthNames[month]} ${year}`;
+
+      const grid = document.getElementById('calendar-days-grid');
+      grid.innerHTML = '';
+
+      const firstDayOfMonth = new Date(year, month, 1);
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      let startingDay = firstDayOfMonth.getDay() - 1;
+      if (startingDay === -1) startingDay = 6; 
+
+      for (let i = 0; i < startingDay; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'calendar-day-cell empty';
+        grid.appendChild(emptyCell);
+      }
+
+      const today = new Date();
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const cell = document.createElement('div');
+        cell.className = 'calendar-day-cell';
+
+        if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+          cell.classList.add('today');
+        }
+
+        const dateStr = `${String(day).padStart(2, '0')}/${String(month + 1).padStart(2, '0')}/${year}`;
+        const eventsOnDay = getEventsForDate(dateStr);
+
+        if (eventsOnDay.length > 0) {
+          cell.classList.add('has-events');
+          cell.innerHTML = `<span class="day-number">${day}</span><span class="event-badge">${eventsOnDay.length}</span>`;
+        } else {
+          cell.innerHTML = `<span>${day}</span>`;
+        }
+
+        cell.addEventListener('click', () => {
+          selectedDateStr = dateStr;
+          showDayEvents(dateStr, eventsOnDay);
+        });
+        grid.appendChild(cell);
+      }
+    }
+
+    function showDayEvents(dateStr, events) {
+      const title = document.getElementById('selected-date-title');
+      const container = document.getElementById('day-events-container');
+
+      title.innerHTML = `<i class="fa-solid fa-calendar-day" style="color: #b45309;"></i> Avvistamenti del ${dateStr}`;
+      container.innerHTML = '';
+
+      if (events.length === 0) {
+        container.innerHTML = `
+          <div class="glass-card p-4 text-center">
+            <p class="text-muted mb-0">Nessun avvistamento registrato in questa data.</p>
+          </div>
+        `;
+        return;
+      }
+
+      events.slice().reverse().forEach(post => {
+        const likesMap = post.likes || {};
+        const likesCount = Object.keys(likesMap).length;
+        const isLiked = currentUser && likesMap[currentUser.id];
+        const dateTimeStr = formatPostTimestamp(post);
+
+        const card = document.createElement('div');
+        card.className = "glass-card overflow-hidden";
+        card.innerHTML = `
+          <div class="p-3 d-flex align-items-center gap-2 border-bottom">
+            <div class="fw-bold text-dark"><i class="fa-solid fa-circle-user text-warning"></i> ${post.author}</div>
+            <span class="small text-muted ms-auto"><i class="fa-regular fa-calendar-days me-1"></i>${dateTimeStr}</span>
+          </div>
+          <img src="${post.imageUrl}" class="cat-post-img" alt="${post.catName}">
+          <div class="p-3">
+            <div class="d-flex align-items-center gap-3 mb-2">
+              <button class="btn btn-link p-0 text-decoration-none btn-like fs-4 ${isLiked ? 'liked' : ''}" onclick="toggleLike('${post.id}')">
+                <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+              </button>
+              <span class="fw-bold text-dark">${likesCount} Mi piace</span>
+            </div>
+            <h5 class="fw-bold text-dark mb-0">${post.catName}</h5>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    window.toggleLike = async function (postId) {
+      if (!currentUser) return;
+      const likeRef = ref(db, `cats/${postId}/likes/${currentUser.id}`);
+      const snap = await get(likeRef);
+      if (snap.exists()) {
+        await update(ref(db, `cats/${postId}/likes`), { [currentUser.id]: null });
+      } else {
+        await update(ref(db, `cats/${postId}/likes`), { [currentUser.id]: true });
+      }
+    };
+
+    document.getElementById('prev-month').addEventListener('click', () => {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      renderCalendar();
+    });
+
+    document.getElementById('next-month').addEventListener('click', () => {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      renderCalendar();
+    });
+  </script>
+
+  <!-- Script Mobile-Optimized Navbar -->
+  <script>
+    let lastScrollTop = 0;
+    const navbar = document.querySelector('.navbar');
+    const delta = 10;
+
+    window.addEventListener('scroll', () => {
+      let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+      let bodyHeight = document.documentElement.scrollHeight;
+      let windowHeight = window.innerHeight;
+
+      if (scrollTop <= 0 || scrollTop + windowHeight >= bodyHeight) {
+        navbar.classList.remove('navbar-hidden');
+        return;
+      }
+
+      if (Math.abs(lastScrollTop - scrollTop) <= delta) return;
+
+      if (scrollTop > lastScrollTop && scrollTop > 60) {
+        navbar.classList.add('navbar-hidden');
+      } else {
+        navbar.classList.remove('navbar-hidden');
+      }
+
+      lastScrollTop = scrollTop;
+    }, { passive: true });
+  </script>
+  <script type="module" src="./notifications.js"></script>
+</body>
+</html>
