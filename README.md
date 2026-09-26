@@ -3,7 +3,7 @@
 <p align="center"><i><font color="#2ecc71">Catch 'em all... but make it cats!</font></i></p>
 
 <p align="center">
-  🌐 <b>App Link:</b> <a href="https://oslpnd.it/meowgo"><b>https://oslpnd.it/meowgo</b></a>
+  🌐 <b>App Link:</b> <a href="https://meowgo.it"><b>https://oslpnd.it/meowgo</b></a>
 </p>
 
 ---
