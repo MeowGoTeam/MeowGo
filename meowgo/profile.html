@@ -142,6 +142,55 @@
       border-radius: 0.5rem;
     }
 
+    .avatar-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    #settings-sidebar {
+      background: rgba(255, 253, 250, 0.98);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-left: 1px solid rgba(210, 180, 140, 0.4);
+      max-width: 320px;
+    }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      text-align: left;
+      background: rgba(245, 238, 230, 0.6);
+      border: 1px solid rgba(210, 180, 140, 0.4);
+      border-radius: 1rem;
+      padding: 12px 16px;
+      color: #3d312a;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .sidebar-link:hover {
+      background: #fff;
+      border-color: #b45309;
+      color: #b45309;
+      transform: translateX(-2px);
+    }
+
+    .sidebar-link i {
+      font-size: 1.1rem;
+      width: 22px;
+      text-align: center;
+      color: #b45309;
+    }
+
+    .sidebar-link.danger i,
+    .sidebar-link.danger { color: #dc2626; }
+    .sidebar-link.danger:hover { border-color: #dc2626; color: #dc2626; }
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
@@ -178,18 +227,22 @@
         <div class="col-lg-8">
           <div class="glass-card p-4 mb-4 position-relative">
             
-            <button class="btn btn-outline-danger btn-sm position-absolute top-0 end-0 m-3 rounded-circle" 
+            <button class="btn btn-outline-secondary btn-sm position-absolute top-0 end-0 m-3 rounded-circle" 
                     style="width: 38px; height: 38px;" 
-                    id="open-delete-modal-btn"
-                    title="Gestisci i tuoi post">
-              <i class="fa-solid fa-trash"></i>
+                    id="open-settings-btn"
+                    title="Impostazioni"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#settings-sidebar"
+                    aria-controls="settings-sidebar">
+              <i class="fa-solid fa-gear"></i>
             </button>
 
             <div class="d-flex align-items-center gap-3">
-              <div class="avatar-circle">😸</div>
+              <div class="avatar-circle" id="user-avatar">😸</div>
               <div>
                 <h2 class="h5 fw-bold mb-0 text-dark" id="user-display-name">Caricamento...</h2>
                 <span class="badge bg-secondary text-wrap mt-1" id="user-email-badge">email@test.com</span>
+                <p class="small text-secondary mb-0 mt-1 fst-italic" id="user-bio"></p>
               </div>
             </div>
 
@@ -272,7 +325,7 @@
                 <input type="file" id="cat-photo-input" accept="image/*" class="form-control" required>
               </div>
               <button type="submit" id="upload-btn" class="btn btn-earth w-100 rounded-3 fw-bold">
-                🌿 Carica Immagine
+                🌿 Carica Immagine ImgBB su DB
               </button>
             </form>
           </div>
@@ -296,6 +349,41 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="settings-sidebar" aria-labelledby="settingsSidebarLabel">
+    <div class="offcanvas-header border-bottom">
+      <h5 class="offcanvas-title fw-bold text-dark" id="settingsSidebarLabel">
+        <i class="fa-solid fa-gear" style="color:#b45309;"></i> Impostazioni
+      </h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column gap-3">
+
+      <button type="button" class="sidebar-link" id="open-delete-modal-btn">
+        <i class="fa-solid fa-trash"></i> Gestisci i tuoi post
+      </button>
+
+      <a href="pagine/modifica-profilo/modifica-profilo.html" class="sidebar-link">
+        <i class="fa-solid fa-user-pen"></i> Modifica profilo
+      </a>
+
+      <a href="pagine/aggiornamenti/aggiornamenti.html" class="sidebar-link">
+        <i class="fa-solid fa-rotate"></i> Aggiornamenti
+      </a>
+
+      <a href="pagine/crediti/crediti.html" class="sidebar-link">
+        <i class="fa-solid fa-heart"></i> Crediti
+      </a>
+      <!-- Nota: i link "Modifica" per aggiornare Aggiornamenti e Crediti si trovano
+           dentro le rispettive pagine (pulsante in alto a destra), non nella sidebar. -->
+
+      <hr class="my-1">
+
+      <a href="#" class="sidebar-link danger" id="sidebar-logout-link">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </a>
     </div>
   </div>
 
@@ -421,12 +509,36 @@
 
     renderNavbar('profile');
 
+    function renderProfileHeader(user) {
+      if (!user) return;
+      document.getElementById('user-display-name').innerText = user.username;
+      document.getElementById('user-email-badge').innerText = user.email;
+
+      const bioEl = document.getElementById('user-bio');
+      bioEl.innerText = user.bio ? user.bio : '';
+
+      const avatarEl = document.getElementById('user-avatar');
+      if (user.photoURL) {
+        avatarEl.innerHTML = `<img src="${user.photoURL}" alt="Foto profilo di ${user.username}">`;
+      } else {
+        avatarEl.innerHTML = '😸';
+      }
+    }
+
     if (currentUser) {
-      document.getElementById('user-display-name').innerText = currentUser.username;
-      document.getElementById('user-email-badge').innerText = currentUser.email;
+      renderProfileHeader(currentUser);
       checkBanStatus();
       listenToAdminNotifications();
       updateUI();
+
+      // Tiene sincronizzato l'header del profilo (nome, bio, foto) con il database
+      onValue(ref(db, `users/${currentUser.id}`), (snapshot) => {
+        if (snapshot.exists()) {
+          const dbUser = { ...currentUser, ...snapshot.val() };
+          setCurrentUser(dbUser);
+          renderProfileHeader(dbUser);
+        }
+      });
     }
 
     // --- CONTROLLO BAN UTENTE ---
@@ -494,11 +606,23 @@
 
     const deleteModalEl = document.getElementById('deletePostModal');
     const deleteModal = new bootstrap.Modal(deleteModalEl);
+    const settingsSidebarEl = document.getElementById('settings-sidebar');
+    const settingsSidebar = bootstrap.Offcanvas.getOrCreateInstance(settingsSidebarEl);
 
     document.getElementById('open-delete-modal-btn').addEventListener('click', () => {
+      settingsSidebar.hide();
       loadMyPosts();
       deleteModal.show();
     });
+
+    const sidebarLogoutLink = document.getElementById('sidebar-logout-link');
+    if (sidebarLogoutLink) {
+      sidebarLogoutLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        clearCurrentUser();
+        window.location.href = 'index.html';
+      });
+    }
 
     function formatPostTimestamp(post) {
       if (post.date && post.time) {
@@ -686,7 +810,7 @@
         alert("Errore caricamento: " + err.message);
       } finally {
         uploadBtn.disabled = false;
-        uploadBtn.innerHTML = `🌿 Carica Immagine`;
+        uploadBtn.innerHTML = `🌿 Carica Immagine ImgBB su DB`;
       }
     });
 
