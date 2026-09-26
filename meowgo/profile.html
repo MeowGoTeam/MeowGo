@@ -376,8 +376,6 @@
       <a href="pagine/crediti/crediti.html" class="sidebar-link">
         <i class="fa-solid fa-heart"></i> Crediti
       </a>
-      <!-- Nota: i link "Modifica" per aggiornare Aggiornamenti e Crediti si trovano
-           dentro le rispettive pagine (pulsante in alto a destra), non nella sidebar. -->
 
       <hr class="my-1">
 
@@ -394,7 +392,8 @@
     import { getDatabase, ref, push, get, child, update, remove, onValue, onChildAdded } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
     import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
 
-    const IMGBB_API_KEY = "b2bd2cbba6ca0679055dc317aa5bf613";
+    // Nuova API Key ImgBB aggiornata
+    const IMGBB_API_KEY = "f3e6d29654a4a6f2bb7c71c1e9e7b054";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDAwgqotGF0BTUGBjxOMseMMfXpBZdAUTI",
@@ -410,7 +409,6 @@
     const db = getDatabase(app);
     let messaging = null;
 
-    // Funzione preliminare per recuperare l'utente corrente
     function getCurrentUser() {
       return JSON.parse(localStorage.getItem('meowgo_test_user')) || null;
     }
@@ -423,7 +421,6 @@
 
     const currentUser = getCurrentUser();
 
-    // Inizializza notifiche native Firebase FCM
     try {
       messaging = getMessaging(app);
       Notification.requestPermission().then(async (permission) => {
@@ -447,7 +444,6 @@
       });
     }
 
-    // Funzione centralizzata per mostrare la notifica nativa con titolo e corpo dinamici
     async function sendNativeNotification(title, body, imageUrl = null) {
       if (!('Notification' in window) || Notification.permission !== 'granted') return;
 
@@ -531,7 +527,6 @@
       listenToAdminNotifications();
       updateUI();
 
-      // Tiene sincronizzato l'header del profilo (nome, bio, foto) con il database
       onValue(ref(db, `users/${currentUser.id}`), (snapshot) => {
         if (snapshot.exists()) {
           const dbUser = { ...currentUser, ...snapshot.val() };
@@ -541,7 +536,6 @@
       });
     }
 
-    // --- CONTROLLO BAN UTENTE ---
     function checkBanStatus() {
       if (!currentUser || !currentUser.id) return;
       const userRef = ref(db, 'users/' + currentUser.id);
@@ -566,11 +560,9 @@
       });
     }
 
-    // --- ASCOLTO NOTIFICHE ADMIN CON TITOLO E TESTO DINAMICI DAL DB ---
     function listenToAdminNotifications() {
       if (!currentUser) return;
 
-      // Gestione notifiche globali
       const globalNotifRef = ref(db, 'notifications/global');
       onChildAdded(globalNotifRef, (snapshot) => {
         const notif = snapshot.val();
@@ -578,13 +570,11 @@
         const lastSeenGlobal = localStorage.getItem('meowgo_last_seen_global') || '';
 
         if (notif && notifId !== lastSeenGlobal) {
-          // Legge direttamente il titolo e il messaggio salvati dal pannello Admin
           sendNativeNotification(notif.title || "MeowGo", notif.message || "");
           localStorage.setItem('meowgo_last_seen_global', notifId);
         }
       });
 
-      // Gestione notifiche dirette (utente specifico)
       if (currentUser.id) {
         const directNotifRef = ref(db, 'notifications/direct/' + currentUser.id);
         onChildAdded(directNotifRef, (snapshot) => {
@@ -592,10 +582,8 @@
           const notifId = snapshot.key;
           
           if (notif && notif.read !== true) {
-            // Legge direttamente il titolo e il messaggio salvati dal pannello Admin
             sendNativeNotification(notif.title || "MeowGo", notif.message || "");
             
-            // Segna come letta sul DB
             update(ref(db, `notifications/direct/${currentUser.id}/${notifId}`), {
               read: true
             }).catch(err => console.error("Errore aggiornamento stato notifica:", err));
