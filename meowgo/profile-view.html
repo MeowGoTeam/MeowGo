@@ -100,7 +100,7 @@
 
     <div class="row justify-content-center">
       <div class="col-lg-8">
-        <!-- Info Profilo, XP e Livello -->
+        <!-- Info Profilo, Bio, XP e Livello -->
         <div class="glass-card p-4 mb-4 text-center">
           <div class="d-flex justify-content-center mb-3">
             <div id="profile-avatar-container">
@@ -108,9 +108,10 @@
             </div>
           </div>
           <h3 class="fw-bold mb-1" id="profile-username">Caricamento...</h3>
+          <p class="small text-secondary mb-2 fst-italic" id="profile-bio"></p>
           <p class="text-muted small mb-3" id="profile-level-text">Livello 1 • 0 XP</p>
 
-          <!-- Barra Progresso XP (1000 XP per livello) -->
+          <!-- Barra Progresso XP -->
           <div class="px-4 mb-4">
             <div class="progress" style="height: 10px; border-radius: 5px;">
               <div id="profile-xp-bar" class="progress-bar bg-warning" role="progressbar" style="width: 0%;"></div>
@@ -185,13 +186,11 @@
       document.getElementById('grid-owner-name').innerText = targetUsername;
       document.getElementById('modal-author').innerText = targetUsername;
 
-      // 1. Caricamento Dati Utente (XP, Livello, Badge, Avatar)
       const usersSnap = await get(ref(db, 'users'));
       if (usersSnap.exists()) {
         const users = usersSnap.val();
         let userEntry = null;
         
-        // Cerca l'utente confrontando lo username (o la chiave se coincide)
         for (const [uid, uData] of Object.entries(users)) {
           if (uData.username === targetUsername || uid === targetUsername) {
             userEntry = uData;
@@ -200,14 +199,24 @@
         }
 
         if (userEntry) {
-          // Avatar
-          if (userEntry.avatarUrl) {
-            document.getElementById('profile-avatar-container').innerHTML = `<img src="${userEntry.avatarUrl}" class="avatar-circle">`;
+          // Gestione Foto Profilo (avatarUrl o photoURL)
+          const userAvatar = userEntry.avatarUrl || userEntry.photoURL;
+          if (userAvatar) {
+            document.getElementById('profile-avatar-container').innerHTML = `<img src="${userAvatar}" class="avatar-circle">`;
           } else {
             document.getElementById('profile-initial').innerText = targetUsername.charAt(0).toUpperCase();
           }
 
-          // XP e Livello (1 livello ogni 1000 XP)
+          // Visualizzazione Bio
+          const bioEl = document.getElementById('profile-bio');
+          if (userEntry.bio) {
+            bioEl.innerText = userEntry.bio;
+            bioEl.classList.remove('d-none');
+          } else {
+            bioEl.innerText = '';
+          }
+
+          // XP e Livello
           const xp = Number(userEntry.xp) || 0;
           const level = Math.floor(xp / 1000) + 1;
           const xpInLevel = xp % 1000;
@@ -217,13 +226,12 @@
           document.getElementById('profile-xp-bar').style.width = `${percent}%`;
           document.getElementById('profile-xp-detail').innerText = `${xpInLevel} / 1000 XP al prossimo livello`;
 
-          // Badge / Achievements
+          // Badge
           if (userEntry.badges) {
             const badgesContainer = document.getElementById('profile-badges');
             badgesContainer.innerHTML = '';
             
             Object.entries(userEntry.badges).forEach(([badgeKey, badgeData]) => {
-              // Gestisce sia se è un booleano (es. badges: { cacciatore: true }) sia un oggetto strutturato
               const title = (typeof badgeData === 'object' && badgeData.title) ? badgeData.title : badgeKey;
               const icon = (typeof badgeData === 'object' && badgeData.icon) ? badgeData.icon : 'fa-medal';
               
@@ -240,7 +248,7 @@
         }
       }
 
-      // 2. Caricamento Post (controllando sia 'author' che eventuali riferimenti utente)
+      // Caricamento Post
       const postsSnap = await get(ref(db, 'cats'));
       const gridContainer = document.getElementById('user-posts-grid');
       gridContainer.innerHTML = '';
@@ -250,7 +258,6 @@
         const postsData = postsSnap.val();
         Object.keys(postsData).forEach(key => {
           const post = postsData[key];
-          // Verifica se il post appartiene all'utente (tramite username o userId)
           if (!post.deleted && (post.author === targetUsername || post.username === targetUsername)) {
             userPosts.push({ id: key, ...post });
           }
