@@ -17,6 +17,7 @@ MeowGo è una piattaforma social e gamificata pensata per gli amanti dei gatti. 
 > Sviluppato con passione da:
 > - 🟢 **Manuel Manera**
 > - 🟢 **Tommaso Monti**
+> - 🟢 **Prof Taranto**
 
 ---
 
