@@ -1,0 +1,33 @@
+body {
+  background: linear-gradient(135deg, #f5f0eb 0%, #e6d5c3 50%, #d4a373 100%);
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: #3d312a;
+}
+.glass-card {
+  background: rgba(255, 253, 250, 0.92);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(210, 180, 140, 0.4);
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 30px rgba(80, 50, 20, 0.1);
+}
+.search-result-item {
+  padding: 12px 15px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 1px solid #f3f4f6;
+  text-decoration: none;
+  color: #3d312a;
+  transition: background 0.2s;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  background: #fff;
+}
+.search-result-item:hover {
+  background: #fdfbf7;
+  color: #b45309;
+}
+.search-avatar {
+  width: 50px; height: 50px; border-radius: 50%; object-fit: cover; background: #b45309; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem;
+}

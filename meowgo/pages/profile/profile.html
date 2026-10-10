@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MeowGo - Profilo 🐾</title>
+
+  <!-- PWA Manifest & Icone Mobile -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#b45309">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="../../assets/icons/icon-512.png">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="pb-5">
+  <script src="script.js"></script>
+
+  <nav class="navbar navbar-expand-lg navbar-light sticky-top navbar-glass mb-4 position-relative z-3">
+    <div class="container">
+      <a class="navbar-brand fw-black fs-3 text-dark d-flex align-items-center gap-2" href="../feed/feed.html">
+        <i class="fa-solid fa-cat" style="color: #b45309;"></i> MeowGo
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto gap-2 mt-2 mt-lg-0" id="nav-links"></ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container position-relative z-1">
+    <section id="profile-page" class="page-section active">
+      <div class="row g-4 justify-content-center">
+        <div class="col-lg-8">
+          <div class="glass-card p-4 mb-4 position-relative">
+            
+            <button class="btn btn-outline-secondary btn-sm position-absolute top-0 end-0 m-3 rounded-circle" 
+                    style="width: 38px; height: 38px;" 
+                    id="open-settings-btn"
+                    title="Impostazioni"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#settings-sidebar"
+                    aria-controls="settings-sidebar">
+              <i class="fa-solid fa-gear"></i>
+            </button>
+
+            <div class="d-flex align-items-center gap-3">
+              <div class="avatar-circle" id="user-avatar">😸</div>
+              <div>
+                <h2 class="h5 fw-bold mb-0 text-dark" id="user-display-name">Caricamento...</h2>
+                <span class="badge bg-secondary text-wrap mt-1" id="user-email-badge">email@test.com</span>
+                <p class="small text-secondary mb-0 mt-1 fst-italic" id="user-bio"></p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="small fw-bold text-secondary">Livello <span id="user-level" class="fw-black" style="color: #b45309;">1</span></span>
+                <span class="small fw-bold text-muted"><span id="user-xp">0</span> / 1000 XP</span>
+              </div>
+              <div class="progress" style="height: 12px; border-radius: 10px; background-color: #e2d7cd;">
+                <div id="xp-bar" class="progress-bar" role="progressbar" style="width: 0%; background-color: #b45309;"></div>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-top">
+              <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-award" style="color: #d97706;"></i> Badge Traguardi</h6>
+              <div class="row g-2">
+                <div class="col-3">
+                  <div class="badge-card" id="badge-first">
+                    <div class="badge-icon">🐾</div>
+                    <div class="fw-bold text-dark" style="font-size:0.7rem;">1° Gatto</div>
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div class="badge-card" id="badge-hunter">
+                    <div class="badge-icon">🥇</div>
+                    <div class="fw-bold text-dark" style="font-size:0.7rem;">Cacciatore</div>
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div class="badge-card" id="badge-master">
+                    <div class="badge-icon">👑</div>
+                    <div class="fw-bold text-dark" style="font-size:0.7rem;">Maestro</div>
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div class="badge-card" id="badge-lvl2">
+                    <div class="badge-icon">🌟</div>
+                    <div class="fw-bold text-dark" style="font-size:0.7rem;">Lvl 2</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-top d-none" id="secret-badges-section">
+              <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-user-ninja text-danger"></i> Badge Segreti Sbloccati 🕵️‍♂️</h6>
+              <div class="row g-2">
+                <div class="col-3 col-sm-2 secret-badge-col" id="col-badge-pelata"><div class="badge-card"><div class="badge-icon">👩‍🦲</div><div class="fw-bold text-dark" style="font-size:0.65rem;">Pelata</div></div></div>
+                <div class="col-3 col-sm-2 secret-badge-col" id="col-badge-maranza"><div class="badge-card"><div class="badge-icon">🧢</div><div class="fw-bold text-dark" style="font-size:0.65rem;">Maranza</div></div></div>
+                <div class="col-3 col-sm-2 secret-badge-col" id="col-badge-police"><div class="badge-card"><div class="badge-icon">👮‍♂️</div><div class="fw-bold text-dark" style="font-size:0.65rem;">Poliziotto</div></div></div>
+                <div class="col-3 col-sm-2 secret-badge-col" id="col-badge-marescialla"><div class="badge-card"><div class="badge-icon">👮‍♀️</div><div class="fw-bold text-dark" style="font-size:0.65rem;">Marescialla</div></div></div>
+                <div class="col-3 col-sm-2 secret-badge-col" id="col-badge-pizza"><div class="badge-card"><div class="badge-icon">🍕</div><div class="fw-bold text-dark" style="font-size:0.65rem;">Pizzaiolo</div></div></div>
+                <div class="col-3 col-sm-2 secret-badge-col" id="col-badge-space"><div class="badge-card"><div class="badge-icon">🚀</div><div class="fw-bold text-dark" style="font-size:0.65rem;">Spaziale</div></div></div>
+                <div class="col-3 col-sm-2 secret-badge-col" id="col-badge-ninja"><div class="badge-card"><div class="badge-icon">🥷</div><div class="fw-bold text-dark" style="font-size:0.65rem;">Ninja</div></div></div>
+                <div class="col-3 col-sm-2 secret-badge-col" id="col-badge-wizard"><div class="badge-card"><div class="badge-icon">🧙‍♂️</div><div class="fw-bold text-dark" style="font-size:0.65rem;">Mago</div></div></div>
+                <div class="col-3 col-sm-2 secret-badge-col" id="col-badge-royal"><div class="badge-card"><div class="badge-icon">👑</div><div class="fw-bold text-dark" style="font-size:0.65rem;">Reale</div></div></div>
+                <div class="col-3 col-sm-2 secret-badge-col" id="col-badge-pirate"><div class="badge-card"><div class="badge-icon">🏴‍☠️</div><div class="fw-bold text-dark" style="font-size:0.65rem;">Pirata</div></div></div>
+                <div class="col-3 col-sm-2 secret-badge-col" id="col-badge-rocker"><div class="badge-card"><div class="badge-icon">🎸</div><div class="fw-bold text-dark" style="font-size:0.65rem;">Rocker</div></div></div>
+                <div class="col-3 col-sm-2 secret-badge-col" id="col-badge-chef"><div class="badge-card"><div class="badge-icon">👨‍🍳</div><div class="fw-bold text-dark" style="font-size:0.65rem;">Chef</div></div></div>
+                <div class="col-3 col-sm-2 secret-badge-col" id="col-badge-hero"><div class="badge-card"><div class="badge-icon">🦸‍♂️</div><div class="fw-bold text-dark" style="font-size:0.65rem;">Supereroe</div></div></div>
+                <div class="col-3 col-sm-2 secret-badge-col" id="col-badge-hacker"><div class="badge-card"><div class="badge-icon">🧑‍💻</div><div class="fw-bold text-dark" style="font-size:0.65rem;">Hacker</div></div></div>
+                <div class="col-3 col-sm-2 secret-badge-col" id="col-badge-detective"><div class="badge-card"><div class="badge-icon">🕵️‍♂️</div><div class="fw-bold text-dark" style="font-size:0.65rem;">Detective</div></div></div>
+                <div class="col-3 col-sm-2 secret-badge-col" id="col-badge-vampire"><div class="badge-card"><div class="badge-icon">🧛</div><div class="fw-bold text-dark" style="font-size:0.65rem;">Vampiro</div></div></div>
+                <div class="col-3 col-sm-2 secret-badge-col" id="col-badge-ghost"><div class="badge-card"><div class="badge-icon">👻</div><div class="fw-bold text-dark" style="font-size:0.65rem;">Fantasma</div></div></div>
+                <div class="col-3 col-sm-2 secret-badge-col" id="col-badge-zombie"><div class="badge-card"><div class="badge-icon">🧟</div><div class="fw-bold text-dark" style="font-size:0.65rem;">Zombie</div></div></div>
+                <div class="col-3 col-sm-2 secret-badge-col" id="col-badge-soccer"><div class="badge-card"><div class="badge-icon">⚽</div><div class="fw-bold text-dark" style="font-size:0.65rem;">Calciatore</div></div></div>
+                <div class="col-3 col-sm-2 secret-badge-col" id="col-badge-artist"><div class="badge-card"><div class="badge-icon">🎨</div><div class="fw-bold text-dark" style="font-size:0.65rem;">Artista</div></div></div>
+                <div class="col-3 col-sm-2 secret-badge-col" id="col-badge-gamer"><div class="badge-card"><div class="badge-icon">🎮</div><div class="fw-bold text-dark" style="font-size:0.65rem;">Gamer</div></div></div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="glass-card p-4">
+            <h3 class="h6 fw-bold mb-3 text-dark"><i class="fa-solid fa-camera text-warning"></i> Aggiungi un Gatto (+100 XP)</h3>
+            <form id="upload-form">
+              <div class="mb-3">
+                <input type="text" id="cat-name-input" class="form-control rounded-3" placeholder="Soprannome Gatto (es: Pelata, Maranza, Poliziotto...)" required>
+              </div>
+              <div class="mb-3">
+                <input type="file" id="cat-photo-input" accept="image/*" class="form-control" required>
+              </div>
+              <button type="submit" id="upload-btn" class="btn btn-earth w-100 rounded-3 fw-bold">
+                🌿 Carica Gatto
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal fade" id="deletePostModal" tabindex="-1" aria-labelledby="deletePostModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content glass-card border-0" style="background: rgba(255, 253, 250, 0.98);">
+        <div class="modal-header border-bottom-0">
+          <h5 class="modal-title fw-bold text-dark" id="deletePostModalLabel">
+            <i class="fa-solid fa-trash text-danger me-2"></i> I tuoi Post Pubblicati
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="my-posts-list" class="d-flex flex-column gap-3">
+            <p class="text-center text-muted my-3">Caricamento post...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="settings-sidebar" aria-labelledby="settingsSidebarLabel">
+    <div class="offcanvas-header border-bottom">
+      <h5 class="offcanvas-title fw-bold text-dark" id="settingsSidebarLabel">
+        <i class="fa-solid fa-gear" style="color:#b45309;"></i> Impostazioni
+      </h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column gap-3">
+
+      <button type="button" class="sidebar-link" id="open-delete-modal-btn">
+        <i class="fa-solid fa-trash"></i> Gestisci i tuoi post
+      </button>
+
+      <a href="../modifica-profilo/modifica-profilo.html" class="sidebar-link">
+        <i class="fa-solid fa-user-pen"></i> Modifica profilo
+      </a>
+
+      <a href="../aggiornamenti/aggiornamenti.html" class="sidebar-link">
+        <i class="fa-solid fa-rotate"></i> Aggiornamenti
+      </a>
+
+      <a href="../crediti/crediti.html" class="sidebar-link">
+        <i class="fa-solid fa-heart"></i> Crediti
+      </a>
+
+      <hr class="my-1">
+
+      <a href="#" class="sidebar-link danger" id="sidebar-logout-link">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </a>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script type="module" src="module.js"></script>
+</body>
+</html>

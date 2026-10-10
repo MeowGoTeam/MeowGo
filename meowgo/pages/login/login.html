@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MeowGo - Accedi 🐾</title>
+
+  <!-- PWA & Meta Tag Mobile -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#b45309">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="MeowGo">
+  <link rel="apple-touch-icon" href="../../assets/icons/icon-192.png">
+
+  <!-- CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="pb-5">
+
+  <nav class="navbar navbar-expand-lg navbar-light sticky-top navbar-glass mb-4 position-relative z-3">
+    <div class="container">
+      <a class="navbar-brand fw-black fs-3 text-dark d-flex align-items-center gap-2" href="../feed/feed.html">
+        <i class="fa-solid fa-cat" style="color: #b45309;"></i> MeowGo
+      </a>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto gap-2 mt-2 mt-lg-0" id="nav-links"></ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container position-relative z-1">
+    <section id="login-page" class="page-section active">
+      <div class="row justify-content-center py-4">
+        <div class="col-md-6 col-lg-5">
+          <div class="glass-card p-4 p-md-5 text-center">
+            <div class="fs-1 mb-2">🌿🐾</div>
+            <h2 class="fw-bold mb-1" id="auth-title">Accedi a MeowGo</h2>
+            <p class="text-muted small mb-4" id="auth-subtitle">Accedi o registrati</p>
+
+            <div id="auth-error" class="alert alert-danger d-none small p-2 mb-3" role="alert"></div>
+
+            <form id="auth-form">
+              <div class="form-floating mb-3 text-start d-none" id="username-container">
+                <input type="text" class="form-control rounded-3" id="auth-username" placeholder="CatMaster">
+                <label for="auth-username">Nome Utente (Nickname)</label>
+              </div>
+
+              <div class="form-floating mb-3 text-start">
+                <input type="email" class="form-control rounded-3" id="auth-email" placeholder="nome@esempio.it" required>
+                <label for="auth-email">Email</label>
+              </div>
+
+              <div class="form-floating mb-4 text-start">
+                <input type="password" class="form-control rounded-3" id="auth-password" placeholder="Password" required>
+                <label for="auth-password">Password</label>
+              </div>
+
+              <button type="submit" id="auth-submit-btn" class="btn btn-earth btn-lg w-100 rounded-3 fw-bold shadow-sm">
+                Accedi 🚀
+              </button>
+            </form>
+
+            <div class="mt-4 pt-3 border-top small text-muted">
+              <span id="auth-switch-text">Non hai ancora un account?</span>
+              <span class="auth-toggle-btn" onclick="toggleAuthMode()">Registrati ora</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Firebase & Logica di Autenticazione -->
+  <script type="module" src="module.js"></script>
+  <!-- Caricamento del modulo centrale delle notifiche -->
+  <script type="module" src="../../assets/js/notifications.js"></script>
+</body>
+</html>

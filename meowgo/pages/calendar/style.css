@@ -1,0 +1,162 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: linear-gradient(135deg, #f5f0eb 0%, #e6d5c3 50%, #d4a373 100%);
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: #3d312a;
+  overflow-x: hidden;
+}
+
+.glass-card {
+  background: rgba(255, 253, 250, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(210, 180, 140, 0.4);
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 30px rgba(80, 50, 20, 0.1);
+}
+
+/* Navbar Sticky */
+.navbar-glass {
+  background: rgba(255, 253, 250, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(210, 180, 140, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  transition: transform 0.3s ease-in-out;
+  will-change: transform;
+}
+
+.navbar-hidden {
+  transform: translateY(-100%);
+}
+
+.btn-earth {
+  background: linear-gradient(45deg, #88502f, #b45309);
+  color: white;
+  border: none;
+}
+.btn-earth:hover {
+  background: linear-gradient(45deg, #6e3f23, #92400e);
+  color: white;
+}
+
+/* --- GRIGLIA CALENDARIO COMPATTA --- */
+.calendar-container {
+  width: 100%;
+  overflow: hidden;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  width: 100%;
+}
+
+.calendar-day-header {
+  text-align: center;
+  font-weight: bold;
+  font-size: 0.75rem;
+  color: #8c7a6b;
+  padding: 4px 0;
+}
+
+.calendar-day-cell {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 0.6rem;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(210, 180, 140, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.calendar-day-cell:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: #b45309;
+}
+
+.calendar-day-cell.empty {
+  background: transparent;
+  border: none;
+  cursor: default;
+}
+
+.calendar-day-cell.today {
+  border: 2px solid #b45309;
+  font-weight: bold;
+}
+
+.calendar-day-cell.has-events {
+  background: #fef3c7;
+  border-color: #f59e0b;
+}
+
+.event-badge {
+  position: absolute;
+  bottom: 2px;
+  background: #b45309;
+  color: white;
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+  font-size: 0.6rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.calendar-day-cell span.day-number {
+  margin-bottom: 8px;
+}
+
+/* --- STILI POST COME NEL FEED --- */
+.cat-post-img {
+  width: 100%;
+  height: 350px;
+  object-fit: cover;
+}
+
+.btn-like { color: #8c7a6b; transition: transform 0.2s; }
+.btn-like.liked { color: #dc2626; transform: scale(1.1); }
+
+@media (max-width: 400px) {
+  .glass-card-calendar {
+    padding: 1rem !important;
+  }
+  .calendar-grid {
+    gap: 2px;
+  }
+  .calendar-day-cell {
+    font-size: 0.75rem;
+    border-radius: 0.4rem;
+  }
+  .event-badge {
+    width: 13px;
+    height: 13px;
+    font-size: 0.55rem;
+    bottom: 1px;
+  }
+  .calendar-day-cell span.day-number {
+    margin-bottom: 6px;
+  }
+  .cat-post-img {
+    height: 280px;
+  }
+}

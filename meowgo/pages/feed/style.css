@@ -1,0 +1,115 @@
+body {
+  background: linear-gradient(135deg, #f5f0eb 0%, #e6d5c3 50%, #d4a373 100%);
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
+  color: #3d312a;
+}
+
+.glass-card {
+  background: rgba(255, 253, 250, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(210, 180, 140, 0.4);
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 30px rgba(80, 50, 20, 0.1);
+}
+
+.navbar-glass {
+  background: rgba(255, 253, 250, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(210, 180, 140, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+}
+
+.cat-post-img {
+  width: 100%;
+  height: 350px;
+  object-fit: cover;
+}
+
+.post-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #d97706;
+}
+
+.post-avatar-placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #d97706, #b45309);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  border: 2px solid #fff;
+}
+
+.btn-like { color: #8c7a6b; transition: transform 0.2s; }
+.btn-like.liked { color: #dc2626; transform: scale(1.1); }
+
+.btn-comment, .btn-share { color: #8c7a6b; transition: transform 0.2s; }
+.btn-comment:hover, .btn-share:hover { color: #b45309; }
+
+.btn-earth {
+  background: linear-gradient(45deg, #88502f, #b45309);
+  color: white;
+  border: none;
+}
+.btn-earth:hover {
+  background: linear-gradient(45deg, #6e3f23, #92400e);
+  color: white;
+}
+
+.icon-btn-action {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.icon-btn-action:hover {
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(180, 83, 9, 0.3);
+}
+
+.comment-bubble {
+  background: rgba(240, 230, 215, 0.6);
+  border-radius: 1rem;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+/* Template isolato per la generazione dell'immagine di condivisione */
+#share-template-container {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  width: 500px;
+}
+
+.share-card-layout {
+  background: #fffdfa;
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  border: 2px solid #d2b48c;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  font-family: system-ui, -apple-system, sans-serif;
+}

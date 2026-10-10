@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MeowGo - MeowGarden 🐾</title>
+
+  <!-- PWA Manifest & Icone Mobile -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#b45309">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="../../assets/icons/icon-512.png">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="pb-5">
+  <script src="script-1.js"></script>
+
+  <nav class="navbar navbar-expand-lg navbar-light sticky-top navbar-glass mb-4 position-relative z-3">
+    <div class="container">
+      <a class="navbar-brand fw-black fs-3 text-dark d-flex align-items-center gap-2" href="../feed/feed.html">
+        <i class="fa-solid fa-cat" style="color: #b45309;"></i> MeowGo
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto gap-2 mt-2 mt-lg-0" id="nav-links"></ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container position-relative z-1">
+    <section id="garden-page" class="page-section active">
+      <div class="row justify-content-center">
+        <div class="col-lg-9 text-center">
+          <div class="glass-card p-4 mb-4">
+            <h2 class="fw-bold text-success mb-1"><i class="fa-solid fa-tree"></i> Il Giardino di <span id="garden-owner-name">...</span></h2>
+            <p class="text-muted mb-0">Un'oasi verde reale in cui gironzolano liberamente i tuoi gatti!</p>
+          </div>
+
+          <div id="garden-container-box">
+            <canvas id="cats-canvas"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module" src="module.js"></script>
+  <script src="../../assets/js/tracker.js"></script>
+
+  <!-- Registrazione Service Worker per PWA -->
+  <script src="script-2.js"></script>
+  <script src="script-3.js"></script>
+  <script type="module" src="../../assets/js/notifications.js"></script>
+</body>
+</html>

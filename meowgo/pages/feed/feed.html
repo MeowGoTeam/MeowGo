@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MeowGo - Feed 🐾</title>
+
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#b45309">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="../../assets/icons/icon-512.png">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="pb-5">
+  <script src="script.js"></script>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light navbar-glass mb-4">
+    <div class="container">
+      <a class="navbar-brand fw-black fs-3 text-dark d-flex align-items-center gap-2" href="./feed.html">
+        <i class="fa-solid fa-cat" style="color: #b45309;"></i> MeowGo
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto gap-2 mt-2 mt-lg-0" id="nav-links"></ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container position-relative z-1">
+    <section id="feed-page" class="page-section active">
+      <div class="row justify-content-center">
+        <div class="col-lg-7">
+          
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold mb-0 text-dark">
+              <i class="fa-solid fa-earth-americas" style="color: #b45309;"></i> Community Feed
+            </h3>
+            
+            <div class="d-flex align-items-center gap-2">
+              <a href="../search/search.html" class="btn btn-earth icon-btn-action shadow-sm" title="Cerca Utenti">
+                <i class="fa-solid fa-magnifying-glass"></i>
+              </a>
+              <a href="../profile/profile.html" class="btn btn-earth icon-btn-action shadow-sm" title="Nuovo Avvistamento">
+                <i class="fa-solid fa-plus"></i>
+              </a>
+              <a href="../calendar/calendar.html" class="btn btn-earth icon-btn-action shadow-sm" title="Calendario">
+                <i class="fa-solid fa-calendar-days"></i>
+              </a>
+            </div>
+          </div>
+
+          <div id="feed-container" class="d-flex flex-column gap-4"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Modal Opzioni Condivisione -->
+  <div class="modal fade" id="shareModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content glass-card border-0">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-bold text-dark"><i class="fa-solid fa-share-nodes me-2" style="color: #b45309;"></i>Condividi Post</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body d-flex flex-column gap-3 py-4">
+          <button class="btn btn-outline-dark p-3 rounded-4 d-flex align-items-center justify-content-between" onclick="sharePostLink()">
+            <span class="fw-bold"><i class="fa-solid fa-link me-2 text-warning"></i> Condividi Link del Post</span>
+            <i class="fa-solid fa-chevron-right text-muted"></i>
+          </button>
+          <button class="btn btn-earth p-3 rounded-4 d-flex align-items-center justify-content-between" onclick="sharePostImage()">
+            <span class="fw-bold"><i class="fa-solid fa-image me-2"></i> Condividi Card Immagine</span>
+            <i class="fa-solid fa-download"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Container Nascosto per Generazione Immagine Card Clean -->
+  <div id="share-template-container">
+    <div id="share-card-target" class="share-card-layout">
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <i class="fa-solid fa-circle-user fs-2 text-warning"></i>
+        <div>
+          <div class="fw-bold text-dark fs-5" id="card-share-author">@username</div>
+          <div class="small text-muted" id="card-share-date">Data</div>
+        </div>
+        <div class="ms-auto fw-black fs-4 text-dark d-flex align-items-center gap-1">
+          <i class="fa-solid fa-cat" style="color: #b45309;"></i> MeowGo
+        </div>
+      </div>
+      <img id="card-share-img" src="" class="w-100 rounded-4 mb-3" style="height: 350px; object-fit: cover;" crossorigin="anonymous">
+      <div class="d-flex justify-content-between align-items-center">
+        <h3 class="fw-bold text-dark mb-0" id="card-share-name">Nome Gatto</h3>
+        <div class="badge fs-6 bg-light text-dark border border-warning-subtle rounded-pill px-3 py-2">
+          <i class="fa-solid fa-heart text-danger me-1"></i> <span id="card-share-likes">0</span> Mi piace
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Library for HTML to Canvas Conversion -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  
+  <script type="module" src="module.js"></script>
+</body>
+</html>

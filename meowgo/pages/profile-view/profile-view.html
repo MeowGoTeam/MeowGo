@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MeowGo - Profilo Utente 🐾</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="pb-5">
+  <div class="container py-4">
+    <div class="d-flex mb-3">
+      <a href="../search/search.html" class="btn btn-secondary rounded-pill px-3"><i class="fa-solid fa-arrow-left me-1"></i> Torna alla Ricerca</a>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <!-- Info Profilo, Bio, XP e Livello -->
+        <div class="glass-card p-4 mb-4 text-center">
+          <div class="d-flex justify-content-center mb-3">
+            <div id="profile-avatar-container">
+              <div class="avatar-circle" id="profile-initial">?</div>
+            </div>
+          </div>
+          <h3 class="fw-bold mb-1" id="profile-username">Caricamento...</h3>
+          <p class="small text-secondary mb-2 fst-italic" id="profile-bio"></p>
+          <p class="text-muted small mb-3" id="profile-level-text">Livello 1 • 0 XP</p>
+
+          <!-- Barra Progresso XP -->
+          <div class="px-4 mb-4">
+            <div class="progress" style="height: 10px; border-radius: 5px;">
+              <div id="profile-xp-bar" class="progress-bar bg-warning" role="progressbar" style="width: 0%;"></div>
+            </div>
+            <small class="text-muted mt-1 d-block" id="profile-xp-detail">0 / 1000 XP</small>
+          </div>
+
+          <div class="mt-3">
+            <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-award text-warning"></i> Badge & Traguardi</h6>
+            <div class="d-flex justify-content-center gap-2 flex-wrap" id="profile-badges">
+              <span class="text-muted small">Nessun badge sbloccato</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Griglia Post Profilo -->
+        <div class="glass-card p-3">
+          <h5 class="fw-bold mb-3 text-dark"><i class="fa-solid fa-images"></i> Post di <span id="grid-owner-name">...</span></h5>
+          <div class="profile-grid" id="user-posts-grid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Stile Instagram per scorrere i post -->
+  <div class="ig-modal-overlay" id="ig-modal">
+    <div class="ig-modal-content">
+      <div class="p-3 d-flex align-items-center justify-content-between border-bottom">
+        <div class="fw-bold" id="modal-author">Autore</div>
+        <button class="btn-close" id="ig-close-btn"></button>
+      </div>
+      <div class="position-relative">
+        <img src="" class="ig-modal-img" id="modal-img">
+        <button class="ig-nav-btn ig-prev" id="ig-prev-btn"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="ig-nav-btn ig-next" id="ig-next-btn"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+      <div class="p-3">
+        <h5 class="fw-bold text-dark mb-1" id="modal-cat-name">Nome Gatto</h5>
+        <p class="text-muted small mb-0" id="modal-date"></p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="module.js"></script>
+</body>
+</html>

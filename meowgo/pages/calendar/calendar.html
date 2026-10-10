@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MeowGo - Calendario 🐾</title>
+
+  <!-- PWA Manifest & Icone Mobile -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#b45309">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="../../assets/icons/icon-512.png">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="pb-5">
+  <script src="script-1.js"></script>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light navbar-glass mb-4">
+    <div class="container">
+      <a class="navbar-brand fw-black fs-3 text-dark d-flex align-items-center gap-2" href="../feed/feed.html">
+        <i class="fa-solid fa-cat" style="color: #b45309;"></i> MeowGo
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto gap-2 mt-2 mt-lg-0" id="nav-links"></ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container px-2 px-sm-3">
+    <div class="row justify-content-center">
+      <div class="col-lg-7">
+        
+        <!-- Box Calendario -->
+        <div class="glass-card glass-card-calendar p-3 p-sm-4 mb-4 calendar-container">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <button class="btn btn-earth btn-sm rounded-circle px-3" id="prev-month">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <h5 class="fw-bold mb-0 text-dark" id="current-month-display">---</h5>
+            <button class="btn btn-earth btn-sm rounded-circle px-3" id="next-month">
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
+
+          <div class="calendar-grid mb-1">
+            <div class="calendar-day-header">Lun</div>
+            <div class="calendar-day-header">Mar</div>
+            <div class="calendar-day-header">Mer</div>
+            <div class="calendar-day-header">Gio</div>
+            <div class="calendar-day-header">Ven</div>
+            <div class="calendar-day-header">Sab</div>
+            <div class="calendar-day-header">Dom</div>
+          </div>
+
+          <div class="calendar-grid" id="calendar-days-grid"></div>
+        </div>
+
+        <!-- Titolo Sezione del Giorno Selezionato -->
+        <h4 class="fw-bold mb-3 text-dark d-flex align-items-center gap-2" id="selected-date-title">
+          <i class="fa-solid fa-calendar-day" style="color: #b45309;"></i> Seleziona un giorno
+        </h4>
+
+        <!-- Container Post Interi del Giorno -->
+        <div id="day-events-container" class="d-flex flex-column gap-4">
+          <div class="glass-card p-4 text-center">
+            <p class="text-muted mb-0">Clicca su una data nel calendario per visualizzare tutti gli avvistamenti associati.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module" src="module.js"></script>
+
+  <!-- Script Mobile-Optimized Navbar -->
+  <script src="script-2.js"></script>
+  <script type="module" src="../../assets/js/notifications.js"></script>
+</body>
+</html>

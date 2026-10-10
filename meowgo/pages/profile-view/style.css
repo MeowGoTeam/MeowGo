@@ -1,0 +1,81 @@
+body {
+  background: linear-gradient(135deg, #f5f0eb 0%, #e6d5c3 50%, #d4a373 100%);
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: #3d312a;
+}
+.glass-card {
+  background: rgba(255, 253, 250, 0.92);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(210, 180, 140, 0.4);
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 30px rgba(80, 50, 20, 0.1);
+}
+.avatar-circle {
+  width: 90px; height: 90px;
+  background: linear-gradient(45deg, #d97706, #b45309);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.5rem;
+  border: 3px solid #fff;
+  color: white;
+  object-fit: cover;
+}
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.grid-thumbnail {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s, opacity 0.2s;
+}
+.grid-thumbnail:hover {
+  opacity: 0.85;
+  transform: scale(0.98);
+}
+.badge-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 8px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid rgba(210, 180, 140, 0.3);
+  width: 85px;
+}
+.badge-icon-box {
+  font-size: 1.3rem;
+  background: #fffbeb;
+  border: 1px solid #f59e0b;
+  border-radius: 50%;
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  color: #b45309;
+  margin-bottom: 4px;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.2);
+}
+.ig-modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.85); z-index: 2000;
+  display: none; align-items: center; justify-content: center;
+  padding: 15px;
+}
+.ig-modal-content {
+  background: #fff; border-radius: 1rem; max-width: 500px; width: 100%; overflow: hidden; position: relative;
+}
+.ig-modal-img {
+  width: 100%; height: 400px; object-fit: cover;
+}
+.ig-nav-btn {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  background: rgba(0,0,0,0.5); color: #fff; border: none; border-radius: 50%;
+  width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+}
+.ig-prev { left: 10px; }
+.ig-next { right: 10px; }
