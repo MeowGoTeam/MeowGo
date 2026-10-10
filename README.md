@@ -45,4 +45,7 @@ MeowGo è una piattaforma social e gamificata pensata per gli amanti dei gatti. 
 
 **Copyright © 2026 MeowGO. Tutti i diritti riservati.**
 
-*Questo software e il relativo codice sorgente sono di proprietà esclusiva degli autori. È severamente vietata la copia, la modifica, la ridistribuzione o l'uso non autorizzato, totale o parziale, senza il previo consenso scritto dei proprietari del copyright.*
+*Questo software e il relativo codice sorgente sono di proprietà esclusiva degli autori. È severamente vietata la copia, la modifica, la ridistribuzione o l'uso non autorizzato, totale o parziale, senza il previo consenso scritto dei proprietari del copyright.
+per info scrivere a 📧<a href="mailto:team@mewgoit">team@meowgo.it</a>
+
+
